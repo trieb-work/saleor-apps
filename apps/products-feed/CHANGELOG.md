@@ -1,5 +1,17 @@
 # saleor-app-products-feed
 
+## 1.21.0
+
+### Minor Changes
+
+- 6c4e3302: Adding support for shipping_label in the attributes mapping.
+- 9d051017: Added native support for redis as possible APL, without any breaking changes.
+
+### Patch Changes
+
+- 2f06b1e9: Bumping app-sdk to v0.52.0 - adding native APL support for vercel-kv and redis
+- a8f63fc4: Modified vercel.json to allow multiple regions. Now Vercel will replicate function in "dub1" and "iad1"
+
 ## 1.20.1
 
 ### Patch Changes
