@@ -1,5 +1,11 @@
 # saleor-app-cms-v2
 
+## 2.11.0
+
+### Minor Changes
+
+- 97ee2ccc: Adding redis APL to cms-v2
+
 ## 2.10.0
 
 ### Minor Changes
