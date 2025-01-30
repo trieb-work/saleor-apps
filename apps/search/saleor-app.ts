@@ -46,6 +46,7 @@ switch (aplType) {
 
     apl = new RedisAPL({
       client,
+      hashCollectionKey: "app-search",
     });
 
     break;

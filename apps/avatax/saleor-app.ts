@@ -38,6 +38,7 @@ switch (env.APL) {
 
     apl = new RedisAPL({
       client,
+      hashCollectionKey: "app-avatax",
     });
     break;
   }

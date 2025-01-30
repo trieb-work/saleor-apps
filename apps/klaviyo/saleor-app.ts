@@ -45,6 +45,7 @@ switch (aplType) {
 
     apl = new RedisAPL({
       client,
+      hashCollectionKey: "app-klaviyo",
     });
     break;
   }

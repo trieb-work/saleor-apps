@@ -39,6 +39,7 @@ switch (aplType) {
 
     apl = new RedisAPL({
       client,
+      hashCollectionKey: "app-products-feed",
     });
 
     break;
