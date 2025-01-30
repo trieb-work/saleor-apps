@@ -1,5 +1,11 @@
 # smtp
 
+## 1.3.1
+
+### Patch Changes
+
+- 1e7884c6: Adding a default hash key to redis to make the apps allow to run on the same redis instance
+
 ## 1.3.0
 
 ### Minor Changes
