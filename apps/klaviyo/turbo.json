@@ -18,7 +18,8 @@
         "APP_API_BASE_URL",
         "APP_IFRAME_BASE_URL",
         "NEXT_PUBLIC_SENTRY_DSN",
-        "REDIS_URL"
+        "REDIS_URL",
+        "OTEL_ACCESS_TOKEN"
       ]
     }
   }

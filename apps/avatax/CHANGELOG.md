@@ -1,4 +1,26 @@
-# app-avatax
+# saleor-app-avatax
+
+## 1.12.10
+
+### Patch Changes
+
+- 708a0a8b: Fix time to live of client logs. After this change logs will be deleted after 14 days by default.
+
+## 1.12.9
+
+### Patch Changes
+
+- b3e136b0: Add `saleor-app` prefix to `package.json` so names of npm app projects are in sync with names of Vercel projects. No visible changes to the user.
+
+## 1.12.8
+
+### Patch Changes
+
+- 899a0576: Changed behavior how tax rate is calculated. It was possible that AvaTax return a non-zero rate, while the actual tax was 0 (for example - product is normally taxable, but this transaction has tax exemption).
+
+  Previously, app returned original, non-zero tax rate as the response together with 0 tax.
+
+  Now, if taxableAmount or total net amount is 0, rate will be also zero
 
 ## 1.13.1
 

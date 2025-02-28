@@ -1,4 +1,17 @@
-# segment
+# saleor-app-segment
+
+## 2.0.7
+
+### Patch Changes
+
+- b3e136b0: Add `saleor-app` prefix to `package.json` so names of npm app projects are in sync with names of Vercel projects. No visible changes to the user.
+
+## 2.0.6
+
+### Patch Changes
+
+- 5cf7d541: Set Vercel function memory allocation to 256 MB and max duration to 15 seconds.
+- fd3bb012: Added logger context and OTEL wrappers to tRPC API routes with Sentry support. After this change 5xx errors will be send to Sentry and we will see tRPC related endpoints in OTEL.
 
 ## 2.1.1
 

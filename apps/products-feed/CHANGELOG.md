@@ -5,6 +5,7 @@
 ### Patch Changes
 
 - 1e7884c6: Adding a default hash key to redis to make the apps allow to run on the same redis instance
+- b3e136b0: Add `saleor-app` prefix to `package.json` so names of npm app projects are in sync with names of Vercel projects. No visible changes to the user.
 
 ## 1.21.0
 

@@ -45,13 +45,13 @@ This repository serves as a starting point in the exploration of Saleor apps.
 
 In the `apps` folder, you will find the following applications:
 
-- [avatax](./apps/avatax) - calculates dynamic taxes via AvaTax API.
-- [cms](./apps/cms-v2) - exports products from Saleor to CMS.
-- [klaviyo](./apps/klaviyo) - send Saleor events to Klaviyo, where you can notify the customers.
-- [products-feed](./apps/products-feed) - generate products feed XML.
-- [search](./apps/search) - connect Saleor with search engines.
-- [segment](./apps/segment/) - connect Saleor with Twilio Segment.
-- [smtp](./apps/smtp) - email communication with customers.
+- [AvaTax](./apps/avatax) - calculates dynamic taxes via AvaTax API.
+- [CMS](./apps/cms) - exports products from Saleor to CMS.
+- [Klaviyo](./apps/klaviyo) - send Saleor events to Klaviyo, where you can notify the customers.
+- [Products feed](./apps/products-feed) - generate products feed XML.
+- [Search](./apps/search) - connect Saleor with search engines.
+- [Segment](./apps/segment/) - connect Saleor with Twilio Segment.
+- [SMTP](./apps/smtp) - email communication with customers.
 
 #### Other official apps
 
@@ -70,3 +70,9 @@ Some of the Saleor apps are available in separate repositories:
 ## Development
 
 You can find the documentation for saleor/apps on [docs.saleor.io](https://docs.saleor.io/docs/3.x/developer/app-store/development).
+
+## ADR
+
+This repository uses [architecture decision records](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions) to document architectural decisions. You can find them in the `docs/adr` directory.
+
+To add new ADR follow [the guide](https://github.com/npryce/adr-tools).

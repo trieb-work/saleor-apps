@@ -17,11 +17,22 @@
 
 #### Requirements
 
-- [node v20](https://nodejs.org)
+- [node v22](https://nodejs.org)
 - [pnpm](https://pnpm.io/)
 - [ngrok](https://ngrok.com/)
 - Saleor Cloud account (free!) or local instance
 - [Algolia](https://www.algolia.com/) account
+
+#### Running app locally in development containers
+
+The easiest way of running Saleor for local development is to use [development containers](https://containers.dev/).
+If you have Visual Studio Code follow their [guide](https://code.visualstudio.com/docs/devcontainers/containers#_quick-start-open-an-existing-folder-in-a-container) on how to open existing folder in container.
+
+Development container only creates container, you still need to start the server.
+
+Development container will have port opened:
+
+1. `3000` - were app dev server will listen to requests
 
 #### Running app in development mode
 
@@ -79,3 +90,7 @@ If you want to use your own database, you can implement your own APL. [Check the
 [Apps guide](https://docs.saleor.io/docs/3.x/developer/extending/apps/key-concepts)
 
 [Configuring apps in dashboard](https://docs.saleor.io/docs/3.x/dashboard/apps)
+
+## OTEL
+
+Visit `@saleor/apps-otel` [README](../../packages/otel/README.md) to learn how to run app with OTEL locally.

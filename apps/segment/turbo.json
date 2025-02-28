@@ -22,7 +22,8 @@
         "AWS_REGION",
         "AWS_ACCESS_KEY_ID",
         "AWS_SECRET_ACCESS_KEY",
-        "REDIS_URL"
+        "REDIS_URL",
+        "OTEL_ACCESS_TOKEN"
       ]
     }
   }
