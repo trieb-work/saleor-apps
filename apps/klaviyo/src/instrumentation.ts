@@ -2,6 +2,6 @@
 
 export async function register() {
   if (process.env.NEXT_RUNTIME === "nodejs" && process.env.OTEL_ENABLED === "true") {
-    await import("./otel-instrumentation.node");
+    await import("./instrumentations/otel-node");
   }
 }

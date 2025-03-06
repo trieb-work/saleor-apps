@@ -1,6 +1,8 @@
 import { context, Span, SpanKind, SpanStatusCode, Tracer } from "@opentelemetry/api";
-import { SemanticAttributes } from "@opentelemetry/semantic-conventions";
+import { ATTR_URL_FULL } from "@opentelemetry/semantic-conventions/incubating";
 import { type CombinedError, makeOperation, mapExchange, Operation } from "urql";
+
+import { ObservabilityAttributes } from "./observability-attributes";
 
 type Definition = {
   name: {
@@ -54,9 +56,9 @@ export const createOtelUrqlExchange = (args: { tracer: Tracer }) => {
 
       span.setAttribute(GraphQLAttributeNames.OPERATION_KEY, operation.key);
 
-      span.setAttribute("saleorApiUrl", operation.context.url);
+      span.setAttribute(ObservabilityAttributes.SALEOR_API_URL, operation.context.url);
 
-      span.setAttribute(SemanticAttributes.HTTP_URL, operation.context.url);
+      span.setAttribute(ATTR_URL_FULL, operation.context.url);
 
       addRequestHeaderAttributes(span, operation.context.fetchOptions?.headers);
       if (operation.variables) {
