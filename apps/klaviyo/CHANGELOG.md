@@ -1,5 +1,12 @@
 # saleor-app-klaviyo
 
+## 1.14.1
+
+### Patch Changes
+
+- Updated dependencies [8154e9e9]
+  - @saleor/apps-otel@2.1.0
+
 ## 1.14.0
 
 ### Minor Changes
