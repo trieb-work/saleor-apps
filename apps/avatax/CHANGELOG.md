@@ -1,6 +1,6 @@
 # saleor-app-avatax
 
-## 1.13.0
+## 1.14.0
 
 ### Minor Changes
 
@@ -20,6 +20,10 @@
   - @saleor/apps-otel@2.0.0
   - @saleor/apps-logger@1.5.0
   - @saleor/apps-shared@1.12.0
+- Updated dependencies [3c4358ae]
+- Updated dependencies [23a31eb4]
+  - @saleor/apps-otel@2.0.0
+  - @saleor/apps-logger@1.5.0
 
 ## 1.12.10
 

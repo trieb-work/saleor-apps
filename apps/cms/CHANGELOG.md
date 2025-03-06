@@ -1,6 +1,6 @@
 # saleor-app-cms
 
-## 2.11.0
+## 2.12.0
 
 ### Minor Changes
 
@@ -19,6 +19,10 @@
   - @saleor/apps-otel@2.0.0
   - @saleor/apps-logger@1.5.0
   - @saleor/apps-shared@1.12.0
+- Updated dependencies [3c4358ae]
+- Updated dependencies [23a31eb4]
+  - @saleor/apps-otel@2.0.0
+  - @saleor/apps-logger@1.5.0
 
 ## 2.10.1
 
