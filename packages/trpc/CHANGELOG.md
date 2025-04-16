@@ -1,4 +1,27 @@
-# @saleor/trpc
+# @saleor/apps-trpc
+
+## 4.0.3
+
+### Patch Changes
+
+- a76465fb: Update `@saleor/app-sdk` to `v1.0.0`
+
+## 4.0.2
+
+### Patch Changes
+
+- da9899d5: Cleanup deps, peerDeps & devDependencies for package
+
+## 4.0.1
+
+### Patch Changes
+
+- 996d9be1: Use [PNPM catalogs](https://pnpm.io/catalogs) feature to ensure that dependencies are in sync between different packages in monorepo.
+- Updated dependencies [996d9be1]
+- Updated dependencies [4fce134d]
+  - @saleor/eslint-config-apps@0.4.12
+  - @saleor/apps-shared@1.12.1
+  - @saleor/typescript-config-apps@0.0.2
 
 ## 4.0.0
 

@@ -1,4 +1,5 @@
 import { trace } from "@opentelemetry/api";
+// don't change to named import - there is a problem with `tsx` script runner (and this file is loaded in webhook migration scripts)
 import * as Sentry from "@sentry/nextjs";
 import { ILogObj, Logger } from "tslog";
 
@@ -62,11 +63,13 @@ export const attachLoggerVercelRuntimeTransport = (
       // Prints Vercel log in proper level https://vercel.com/docs/observability/runtime-logs#level
       if (_meta.logLevelName === "ERROR") {
         console.error(stringifiedMessage);
+
         return;
       }
 
       if (_meta.logLevelName === "WARN") {
         console.warn(stringifiedMessage);
+
         return;
       }
 

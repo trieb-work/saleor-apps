@@ -1,4 +1,3 @@
-/* eslint-disable node/no-process-env */
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
@@ -41,9 +40,22 @@ export const env = createEnv({
     VERCEL_GIT_COMMIT_SHA: z.string().optional(),
     OTEL_ACCESS_TOKEN: z.string().optional(),
     VERCEL_ENV: z.string().optional(),
+    REPOSITORY_URL: z.string().optional(),
+    OTEL_TRACES_SAMPLER_ARG: z.coerce.number().min(0).max(1).optional().default(1),
+    OTEL_TENANT_DOMAIN_ALLOWLIST: z
+      .string()
+      .optional()
+      .transform((s) => {
+        if (!s) {
+          return [];
+        }
+
+        return s.split(",").map((domain) => domain.trim());
+      }),
+    OTEL_METRICS_FLUSH_TIMEOUT_MILIS: z.coerce.number().optional().default(5_000),
   },
   shared: {
-    NODE_ENV: z.enum(["development", "production", "test"]),
+    NODE_ENV: z.enum(["development", "production", "test"]).optional().default("development"),
     ENV: z.enum(["local", "development", "staging", "production"]).optional().default("local"),
   },
   // we use the manual destruction here to validate if env variable is set inside turbo.json
@@ -79,6 +91,10 @@ export const env = createEnv({
     VERCEL_GIT_COMMIT_SHA: process.env.VERCEL_GIT_COMMIT_SHA,
     OTEL_ACCESS_TOKEN: process.env.OTEL_ACCESS_TOKEN,
     VERCEL_ENV: process.env.VERCEL_ENV,
+    REPOSITORY_URL: process.env.REPOSITORY_URL,
+    OTEL_TRACES_SAMPLER_ARG: process.env.OTEL_TRACES_SAMPLER_ARG,
+    OTEL_TENANT_DOMAIN_ALLOWLIST: process.env.OTEL_TENANT_DOMAIN_ALLOWLIST,
+    OTEL_METRICS_FLUSH_TIMEOUT_MILIS: process.env.OTEL_METRICS_FLUSH_TIMEOUT_MILIS,
   },
   isServer: typeof window === "undefined" || process.env.NODE_ENV === "test",
 });

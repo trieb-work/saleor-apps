@@ -12,7 +12,7 @@ import { AvataxCalculateTaxesPayloadTransformer } from "@/modules/avatax/calcula
 import { AvataxCalculateTaxesResponseTransformer } from "@/modules/avatax/calculate-taxes/avatax-calculate-taxes-response-transformer";
 import { AutomaticallyDistributedProductLinesDiscountsStrategy } from "@/modules/avatax/discounts";
 import { AvataxTaxCodeMatchesService } from "@/modules/avatax/tax-code/avatax-tax-code-matches.service";
-import { ClientLogStoreRequest } from "@/modules/client-logs/client-log";
+import { CalculateTaxesLogRequest } from "@/modules/client-logs/calculate-taxes-log-request";
 import { ILogWriterFactory } from "@/modules/client-logs/log-writer-factory";
 
 import { MetadataItem } from "../../../../generated/graphql";
@@ -58,6 +58,7 @@ export class CalculateTaxesUseCase {
     return payloadVerificationResult.mapErr((innerError) => {
       switch (innerError["constructor"]) {
         case TaxIncompletePayloadErrors.MissingLinesError:
+
         case TaxIncompletePayloadErrors.MissingAddressError: {
           return new CalculateTaxesUseCase.ExpectedIncompletePayloadError(
             "Payload is incomplete and taxes cant be calculated. This is expected",
@@ -66,6 +67,7 @@ export class CalculateTaxesUseCase {
             },
           );
         }
+
         default: {
           return new CalculateTaxesUseCase.UnhandledError("Failed to verify payload", {
             errors: [innerError],
@@ -96,12 +98,17 @@ export class CalculateTaxesUseCase {
       });
   }
 
-  private async callAvaTax(
-    payload: CalculateTaxesPayload,
-    avataxConfig: AvataxConfig,
-    discountStrategy: AutomaticallyDistributedProductLinesDiscountsStrategy,
-    authData: AuthData,
-  ) {
+  private async callAvaTax({
+    payload,
+    avataxConfig,
+    discountStrategy,
+    authData,
+  }: {
+    payload: CalculateTaxesPayload;
+    avataxConfig: AvataxConfig;
+    discountStrategy: AutomaticallyDistributedProductLinesDiscountsStrategy;
+    authData: AuthData;
+  }) {
     /**
      * Create local dependencies. They more-or-less need runtime values, like AuthData.
      * This is part of the refactor. Later we should refactor these and inject them into use-case
@@ -156,12 +163,11 @@ export class CalculateTaxesUseCase {
         error: config.error,
       });
 
-      ClientLogStoreRequest.create({
-        level: "error",
-        message: "Failed to calculate taxes. Invalid config",
-        checkoutOrOrderId: payload.taxBase.sourceObject.id,
-        channelId: payload.taxBase.channel.slug,
-        checkoutOrOrder: "checkout",
+      CalculateTaxesLogRequest.createErrorLog({
+        sourceId: payload.taxBase.sourceObject.id,
+        channelId: payload.taxBase.channel.id,
+        sourceType: "checkout",
+        errorReason: "Cannot get app configuration",
       })
         .mapErr(captureException)
         .map(logWriter.writeLog);
@@ -178,12 +184,11 @@ export class CalculateTaxesUseCase {
     const providerConfig = config.value.getConfigForChannelSlug(channelSlug);
 
     if (providerConfig.isErr()) {
-      ClientLogStoreRequest.create({
-        level: "error",
-        message: "Failed to calculate taxes. Invalid config",
-        checkoutOrOrderId: payload.taxBase.sourceObject.id,
-        channelId: payload.taxBase.channel.slug,
-        checkoutOrOrder: "checkout",
+      CalculateTaxesLogRequest.createErrorLog({
+        sourceId: payload.taxBase.sourceObject.id,
+        channelId: payload.taxBase.channel.id,
+        sourceType: "checkout",
+        errorReason: "Invalid app configuration",
       })
         .mapErr(captureException)
         .map(logWriter.writeLog);
@@ -199,19 +204,18 @@ export class CalculateTaxesUseCase {
     }
 
     return fromPromise(
-      this.callAvaTax(
+      this.callAvaTax({
         payload,
-        providerConfig.value.avataxConfig.config,
-        this.discountsStrategy,
+        avataxConfig: providerConfig.value.avataxConfig.config,
         authData,
-      ),
+        discountStrategy: this.discountsStrategy,
+      }),
       (err) => {
-        ClientLogStoreRequest.create({
-          level: "error",
-          message: "Failed to calculate taxes.",
-          checkoutOrOrderId: payload.taxBase.sourceObject.id,
-          channelId: payload.taxBase.channel.slug,
-          checkoutOrOrder: "checkout",
+        CalculateTaxesLogRequest.createErrorLog({
+          sourceId: payload.taxBase.sourceObject.id,
+          channelId: payload.taxBase.channel.id,
+          sourceType: "checkout",
+          errorReason: "AvaTax API returned an error",
         })
           .mapErr(captureException)
           .map(logWriter.writeLog);
@@ -223,13 +227,11 @@ export class CalculateTaxesUseCase {
     ).map((results) => {
       this.logger.info("Taxes calculated - returning response do Saleor");
 
-      ClientLogStoreRequest.create({
-        level: "info",
-        message: "Taxes calculated",
-        checkoutOrOrderId: payload.taxBase.sourceObject.id,
-        channelId: payload.taxBase.channel.slug,
-        attributes: results,
-        checkoutOrOrder: "checkout",
+      CalculateTaxesLogRequest.createSuccessLog({
+        sourceId: payload.taxBase.sourceObject.id,
+        channelId: payload.taxBase.channel.id,
+        sourceType: "checkout",
+        calculatedTaxesResult: results,
       })
         .mapErr(captureException)
         .map(logWriter.writeLog);

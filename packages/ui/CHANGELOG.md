@@ -1,5 +1,17 @@
 # @saleor/apps-ui
 
+## 1.2.12
+
+### Patch Changes
+
+- da9899d5: Cleanup deps, peerDeps & devDependencies for package
+
+## 1.2.11
+
+### Patch Changes
+
+- 996d9be1: Use [PNPM catalogs](https://pnpm.io/catalogs) feature to ensure that dependencies are in sync between different packages in monorepo.
+
 ## 1.2.10
 
 ### Patch Changes

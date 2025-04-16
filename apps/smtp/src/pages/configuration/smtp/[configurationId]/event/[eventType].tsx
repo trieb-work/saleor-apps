@@ -1,4 +1,4 @@
-import { useDashboardNotification } from "@saleor/apps-shared";
+import { useDashboardNotification } from "@saleor/apps-shared/use-dashboard-notification";
 import { TextLink } from "@saleor/apps-ui";
 import { Box, Text } from "@saleor/macaw-ui";
 import { NextPage } from "next";
@@ -56,8 +56,9 @@ const EditSmtpEventPage: NextPage = () => {
       enabled: !!configurationId && !!eventType,
       onSettled(data, error) {
         if (error) {
-          console.error("Error during fetching the configuration: ", error);
+          notifyError("Error during fetching the configuration");
         }
+
         if (error?.data?.code === "NOT_FOUND" || !data) {
           notifyError("The requested configuration does not exist.");
           router.replace(appUrls.configuration());

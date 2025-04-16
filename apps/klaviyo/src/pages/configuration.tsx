@@ -1,10 +1,10 @@
 import { useAppBridge, useAuthenticatedFetch } from "@saleor/app-sdk/app-bridge";
-import { useDashboardNotification } from "@saleor/apps-shared";
+import { useDashboardNotification } from "@saleor/apps-shared/use-dashboard-notification";
 import { Breadcrumbs, ButtonsBox, Layout, SkeletonLayout, TextLink } from "@saleor/apps-ui";
 import { Box, Button, Input, Text } from "@saleor/macaw-ui";
 import { ChangeEvent, SyntheticEvent, useEffect, useState } from "react";
 
-import { useAppApi } from "../hooks/useAppApi";
+import { useAppApi } from "../hooks/use-app-api";
 
 interface ConfigurationField {
   key: string;

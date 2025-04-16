@@ -21,10 +21,10 @@ const generateArr = (length: number) => new Array(length).fill(null).map((_, ind
 const wait = () => new Promise((res) => setTimeout(res, 100));
 
 describe("CategoriesFetcher", () => {
-  const mockQueryPromise = vi.fn<any, FetchResult>();
+  const mockQueryPromise = vi.fn<() => FetchResult>();
 
   const mockClient: Pick<Client, "query"> = {
-    // @ts-ignore - It's hard to mock urql mocks - but it can be improved
+    // @ts-expect-error - It's hard to mock urql mocks - but it can be improved
     query() {
       return {
         toPromise: mockQueryPromise,
@@ -58,7 +58,7 @@ describe("CategoriesFetcher", () => {
 
     const result = await instance.fetchAllCategories();
 
-    expect(result).toEqual([
+    expect(result).toStrictEqual([
       {
         googleCategoryId: "2",
         id: "cat-1",
@@ -136,7 +136,7 @@ describe("CategoriesFetcher", () => {
      * Some indexes assertions
      */
     [0, 5, 99, 299].forEach((index) => {
-      expect(result[index]).toEqual({
+      expect(result[index]).toStrictEqual({
         googleCategoryId: `${index * 2}`,
         id: `cat-${index}`,
         name: `Category ${index}`,
@@ -164,6 +164,6 @@ describe("CategoriesFetcher", () => {
 
     const result = await instance.fetchAllCategories();
 
-    expect(result).toEqual([]);
+    expect(result).toStrictEqual([]);
   });
 });

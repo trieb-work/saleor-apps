@@ -1,5 +1,46 @@
 # @saleor/apps-otel
 
+## 2.2.0
+
+### Minor Changes
+
+- e3c75265: Added new `createMetricsReader` factory to create periodic metric reader with proper headers.
+
+### Patch Changes
+
+- b4ed42c9: Add `PATH`, `SALEOR_EVENT` & `TENANT_DOMAIN` to observability attributes
+
+## 2.1.5
+
+### Patch Changes
+
+- 1aff5e42: Add new helpers for Next.js app router.
+
+## 2.1.4
+
+### Patch Changes
+
+- a76465fb: Update `@saleor/app-sdk` to `v1.0.0`
+
+## 2.1.3
+
+### Patch Changes
+
+- da9899d5: Cleanup deps, peerDeps & devDependencies for package
+
+## 2.1.2
+
+### Patch Changes
+
+- 6e94e99c: Fix wrong observability attribute name
+
+## 2.1.1
+
+### Patch Changes
+
+- 996d9be1: Use [PNPM catalogs](https://pnpm.io/catalogs) feature to ensure that dependencies are in sync between different packages in monorepo.
+- aa1c7597: Export new `ObservabilityAttributes`: `COMMIT_SHA`, `REPOSITORY_URL` & `VERCEL_ENV`
+
 ## 2.1.0
 
 ### Minor Changes

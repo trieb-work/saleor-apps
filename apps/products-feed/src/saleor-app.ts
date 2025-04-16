@@ -1,4 +1,7 @@
-import { APL, FileAPL, SaleorCloudAPL, UpstashAPL } from "@saleor/app-sdk/APL";
+import { APL } from "@saleor/app-sdk/APL";
+import { FileAPL } from "@saleor/app-sdk/APL/file";
+import { SaleorCloudAPL } from "@saleor/app-sdk/APL/saleor-cloud";
+import { UpstashAPL } from "@saleor/app-sdk/APL/upstash";
 import { RedisAPL } from "@saleor/app-sdk/APL/redis";
 import { SaleorApp } from "@saleor/app-sdk/saleor-app";
 import { createClient } from "redis";
@@ -12,10 +15,12 @@ switch (aplType) {
     apl = new UpstashAPL();
 
     break;
+
   case "file":
     apl = new FileAPL();
 
     break;
+
   case "saleor-cloud": {
     if (!process.env.REST_APL_ENDPOINT || !process.env.REST_APL_TOKEN) {
       throw new Error("Rest APL is not configured - missing env variables. Check saleor-app.ts");

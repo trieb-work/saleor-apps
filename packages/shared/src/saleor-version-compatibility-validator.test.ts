@@ -16,8 +16,8 @@ describe("SaleorVersionCompatibilityValidator", () => {
     [">3.10", "3.11.0-a"],
   ])('Passes for app requirement "%s" and saleor version "%s"', (appVersionReq, saleorVersion) => {
     expect(() =>
-      new SaleorVersionCompatibilityValidator(appVersionReq).validateOrThrow(saleorVersion)
-    ).not.to.throw();
+      new SaleorVersionCompatibilityValidator(appVersionReq).validateOrThrow(saleorVersion),
+    ).not.toThrow();
   });
 
   it.each([
@@ -27,7 +27,7 @@ describe("SaleorVersionCompatibilityValidator", () => {
     [">=3.10", "2.0.0"],
   ])('Throws for app requirement "%s" and saleor version "%s"', (appVersionReq, saleorVersion) => {
     expect(() =>
-      new SaleorVersionCompatibilityValidator(appVersionReq).validateOrThrow(saleorVersion)
-    ).to.throw();
+      new SaleorVersionCompatibilityValidator(appVersionReq).validateOrThrow(saleorVersion),
+    ).toThrow();
   });
 });

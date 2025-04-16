@@ -1,7 +1,7 @@
-import { NextWebhookApiHandler, SaleorAsyncWebhook } from "@saleor/app-sdk/handlers/next";
+import { NextJsWebhookHandler, SaleorAsyncWebhook } from "@saleor/app-sdk/handlers/next";
 import { wrapWithLoggerContext } from "@saleor/apps-logger/node";
 import { withSpanAttributes } from "@saleor/apps-otel/src/with-span-attributes";
-import * as Sentry from "@sentry/nextjs";
+import { captureException } from "@sentry/nextjs";
 import { gql } from "urql";
 
 import { createLogger } from "@/logger";
@@ -54,7 +54,7 @@ export const productVariantUpdatedWebhook =
  * todo document that fields in Contentful should be unique
  * todo fetch metadata end decode it with payload
  */
-const handler: NextWebhookApiHandler<ProductVariantUpdatedWebhookPayloadFragment> = async (
+const handler: NextJsWebhookHandler<ProductVariantUpdatedWebhookPayloadFragment> = async (
   req,
   res,
   context,
@@ -67,7 +67,7 @@ const handler: NextWebhookApiHandler<ProductVariantUpdatedWebhookPayloadFragment
 
   if (!payload.productVariant) {
     logger.warn("Product variant not found in payload");
-    Sentry.captureException("Product variant not found in payload");
+    captureException("Product variant not found in payload");
 
     return res.status(500).end();
   }

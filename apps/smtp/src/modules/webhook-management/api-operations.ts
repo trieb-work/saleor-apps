@@ -67,6 +67,7 @@ export const fetchAppWebhooks = ({ client }: { client: Client }) =>
           "App data not found in the response. The token can be invalid or the app has been uninstalled.",
         );
       }
+
       return appData.webhooks || [];
     });
 
@@ -85,12 +86,12 @@ export const createAppWebhook = ({
         throw new Error(response.error.message);
       }
 
-      console.log("create wh", response.data?.webhookCreate?.errors);
       const webhookCreateData = response.data?.webhookCreate?.webhook;
 
       if (!webhookCreateData) {
         throw new Error("Webhook Creation did not return any data nor error.");
       }
+
       return webhookCreateData;
     });
 
@@ -102,5 +103,6 @@ export const deleteAppWebhook = ({ client, id }: { client: Client; id: string })
       if (response.error) {
         throw new Error(response.error.message);
       }
+
       return;
     });

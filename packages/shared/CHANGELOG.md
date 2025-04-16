@@ -1,5 +1,23 @@
 # @saleor/apps-shared
 
+## 1.12.3
+
+### Patch Changes
+
+- e3c75265: Added `race` function. This utility helps prevent promises from hanging indefinitely by adding a timeout constraint. If the original promise doesn't resolve within the specified timeout, the race will reject with the provided error.
+
+## 1.12.2
+
+### Patch Changes
+
+- da9899d5: Cleanup deps, peerDeps & devDependencies for package
+
+## 1.12.1
+
+### Patch Changes
+
+- 996d9be1: Use [PNPM catalogs](https://pnpm.io/catalogs) feature to ensure that dependencies are in sync between different packages in monorepo.
+
 ## 1.12.0
 
 ### Minor Changes

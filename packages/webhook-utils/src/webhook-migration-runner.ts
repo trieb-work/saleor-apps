@@ -26,18 +26,28 @@ type GetManifestFunction = ({
 }) => Promise<Array<WebhookManifest>>;
 
 export class WebhookMigrationRunner {
-  constructor(
-    private args: {
-      dryRun: boolean;
-      logger: Logger;
-      client: Client;
-      saleorApiUrl: string;
-      getManifests: GetManifestFunction;
-    },
-  ) {}
+  private readonly dryRun: boolean;
+  private readonly logger: Logger;
+  private readonly client: Client;
+  private readonly saleorApiUrl: string;
+  private readonly getManifests: GetManifestFunction;
+
+  constructor(args: {
+    dryRun: boolean;
+    logger: Logger;
+    client: Client;
+    saleorApiUrl: string;
+    getManifests: GetManifestFunction;
+  }) {
+    this.dryRun = args.dryRun;
+    this.logger = args.logger;
+    this.client = args.client;
+    this.saleorApiUrl = args.saleorApiUrl;
+    this.getManifests = args.getManifests;
+  }
 
   public migrate = async () => {
-    const { dryRun, logger, client, getManifests, saleorApiUrl } = this.args;
+    const { dryRun, logger, client, getManifests, saleorApiUrl } = this;
 
     try {
       logger.debug("Getting app details and webhooks data");
@@ -70,19 +80,22 @@ export class WebhookMigrationRunner {
             `Migration finished with warning for ${saleorApiUrl}: app probably uninstalled`,
           );
           break;
+
         case error instanceof WebhookMigrationNetworkError:
           logger.warn(`Migration finished with warning for ${saleorApiUrl}: Saleor not available`);
           break;
+
         case error instanceof WebhookMigrationUnknownError:
           logger.error(
             `Migration finished with error for ${saleorApiUrl} while fetching data from Saleor`,
             { error },
           );
           throw error;
+
         default:
           logger.error(
             `Migration finished with error for ${saleorApiUrl} while running migrations`,
-            { error },
+            { error: error },
           );
           throw error;
       }

@@ -1,0 +1,29 @@
+fragment TransactionInitializeSessionEvent on TransactionInitializeSession {
+  version
+  action {
+    amount
+    currency
+  }
+  # TODO: check recipient of the app
+  data
+  sourceObject {
+    ... on Checkout {
+      channel {
+        ...Channel
+      }
+    }
+    ... on Order {
+      channel {
+        ...Channel
+      }
+    }
+  }
+}
+
+subscription TransactionInitializeSession {
+  event {
+    ... on TransactionInitializeSession {
+      ...TransactionInitializeSessionEvent
+    }
+  }
+}

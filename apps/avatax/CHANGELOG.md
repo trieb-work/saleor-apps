@@ -1,14 +1,130 @@
 # saleor-app-avatax
 
+## 1.16.0
+
+### Minor Changes
+
+- e3c75265: Add custom OTEL metric that counts requests made to AvaTax API.
+
+### Patch Changes
+
+- 4c5c63d5: Use TypeScript unions instead of enums in types generated from Graphql files.
+- b4ed42c9: Added wrapper for external OTEL tracer. Wrapper is responsible for enhanced error serialization, custom attribute injection & proper span lifecycle management.
+- Updated dependencies [e3c75265]
+- Updated dependencies [b4ed42c9]
+- Updated dependencies [e3c75265]
+- Updated dependencies [b4ed42c9]
+  - @saleor/apps-otel@2.2.0
+  - @saleor/apps-shared@1.12.3
+  - @saleor/apps-logger@1.5.5
+
+## 1.15.1
+
+### Patch Changes
+
+- 94c52129: Update to Next.js 15
+- 6e268b36: Export tRPC handler once in app route.
+  - @saleor/apps-logger@1.5.4
+  - @saleor/apps-otel@2.1.5
+  - @saleor/react-hook-form-macaw@0.2.14
+  - @saleor/sentry-utils@0.2.4
+  - @saleor/apps-shared@1.12.2
+  - @saleor/apps-ui@1.2.12
+  - @saleor/webhook-utils@0.2.5
+
+## 1.15.0
+
+### Minor Changes
+
+- 1aff5e42: Migrate AvaTax app to Next.js app router.
+
+### Patch Changes
+
+- Updated dependencies [1aff5e42]
+  - @saleor/apps-logger@1.5.4
+  - @saleor/apps-otel@2.1.5
+
+## 1.14.7
+
+### Patch Changes
+
+- a76465fb: Update `@saleor/app-sdk` to `v1.0.0`
+- Updated dependencies [a76465fb]
+  - @saleor/apps-logger@1.5.3
+  - @saleor/apps-otel@2.1.4
+
+## 1.14.6
+
+### Patch Changes
+
+- 339518c2: Fixed how we initialize Sentry SDK for API routes when runtime is Node.js. After this change we will use `NodeClient` directly from Sentry SDK to avoid interfering with our OTEL setup. We also removed not needed Sentry integration for edge runtime
+
+## 1.14.5
+
+### Patch Changes
+
+- cc32891b: Fix how we initialize Sentry SDK for API routes when using node.js runtime. After this change we will use `NodeClient` from Sentry directly - avoiding Sentry interference with our OTEL setup.
+
+## 1.14.4
+
+### Patch Changes
+
+- a18b637e: Setup Sentry integration with our OTEL setup.
+
+## 1.14.3
+
+### Patch Changes
+
+- c8e61ac2: Updated Sentry to 9.6.1
+- da9899d5: Cleanup deps, peerDeps & devDependencies for package
+- Updated dependencies [da9899d5]
+  - @saleor/react-hook-form-macaw@0.2.14
+  - @saleor/webhook-utils@0.2.5
+  - @saleor/apps-logger@1.5.2
+  - @saleor/apps-shared@1.12.2
+  - @saleor/apps-otel@2.1.3
+  - @saleor/apps-ui@1.2.12
+  - @saleor/sentry-utils@0.2.4
+
+## 1.14.2
+
+### Patch Changes
+
+- Updated dependencies [6e94e99c]
+  - @saleor/apps-otel@2.1.2
+
 ## 1.14.1
 
 ### Patch Changes
 
+- f8196e1d: Fixed how we import logger transports. After this change logger can be used from scripts that use `tsx` package.
+- 996d9be1: Use [PNPM catalogs](https://pnpm.io/catalogs) feature to ensure that dependencies are in sync between different packages in monorepo.
+- aa1c7597: Added new attributes to OTEL setup - it will allow better GitHub integration with our OTEL provider
+- Updated dependencies [996d9be1]
+- Updated dependencies [aa1c7597]
+  - @saleor/react-hook-form-macaw@0.2.13
+  - @saleor/webhook-utils@0.2.4
+  - @saleor/apps-logger@1.5.1
+  - @saleor/apps-shared@1.12.1
+  - @saleor/apps-otel@2.1.1
+  - @saleor/apps-ui@1.2.11
+  - @saleor/sentry-utils@0.2.4
+
+## 1.14.0
+
+### Minor Changes
+
+- c51307e6: Refactor AvaTax client to use neverthrow library. No visible changes to the end user.
+- 71360cb4: Wrapped AvaTax API calls and Saleor webhook handlers in tracking spans. Also improved client logs.
+
+### Patch Changes
+
+- 3a618b9f: Pass channelId instead of channelSlug to client logs & remove not used field from client logs
 - 8154e9e9: Use `AwsInstrumentation` to auto instrument DynamoDB calls
 - Updated dependencies [8154e9e9]
   - @saleor/apps-otel@2.1.0
 
-## 1.14.0
+## 1.13.0
 
 ### Minor Changes
 

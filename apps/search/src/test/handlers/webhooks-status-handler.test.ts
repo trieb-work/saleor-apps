@@ -1,10 +1,10 @@
-import { NextProtectedApiHandler } from "@saleor/app-sdk/handlers/next";
+import { NextJsProtectedApiHandler } from "@saleor/app-sdk/handlers/next";
 import { SettingsManager } from "@saleor/app-sdk/settings-manager";
 import { createMocks } from "node-mocks-http";
 import { Client, OperationResult } from "urql";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { FetchOwnWebhooksQuery, WebhookEventTypeAsyncEnum } from "../../../generated/graphql";
+import { FetchOwnWebhooksQuery } from "../../../generated/graphql";
 import { IWebhookActivityTogglerService } from "../../domain/WebhookActivityToggler.service";
 import { AppConfig } from "../../modules/configuration/configuration";
 import { webhooksStatusHandlerFactory } from "../../pages/api/webhooks-status";
@@ -31,9 +31,7 @@ const appWebhooksResponseData: Pick<OperationResult<FetchOwnWebhooksQuery, any>,
           name: "W1",
           id: "w1",
           isActive: true,
-          asyncEvents: [
-            { eventType: WebhookEventTypeAsyncEnum.ProductCreated, name: "ProductCreated" },
-          ],
+          asyncEvents: [{ eventType: "PRODUCT_CREATED", name: "ProductCreated" }],
           eventDeliveries: {
             edges: [],
           },
@@ -60,7 +58,7 @@ describe("webhooksStatusHandler", () => {
     delete: vi.fn(),
   };
 
-  let handler: NextProtectedApiHandler;
+  let handler: NextJsProtectedApiHandler;
 
   beforeEach(() => {
     vi.resetAllMocks();

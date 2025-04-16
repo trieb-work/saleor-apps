@@ -1,7 +1,7 @@
 {
-  "$schema": "https://turbo.build/schema.json",
+  "$schema": "https://turbo.build/schema.v2.json",
   "extends": ["//"],
-  "pipeline": {
+  "tasks": {
     "deploy": {
       "env": [
         "ALLOWED_DOMAIN_PATTERN",
@@ -9,32 +9,27 @@
         "APL",
         "APP_API_BASE_URL",
         "APP_IFRAME_BASE_URL",
-        "APP_LOG_LEVEL",
         "AVATAX_CLIENT_TIMEOUT",
         "AWS_ACCESS_KEY_ID",
         "AWS_REGION",
         "AWS_SECRET_ACCESS_KEY",
         "DYNAMODB_LOGS_ITEM_TTL_IN_DAYS",
         "DYNAMODB_LOGS_TABLE_NAME",
-        "FF_ENABLE_EXPERIMENTAL_LOGS",
         "FILE_APL_PATH",
         "MANIFEST_APP_ID",
         "NEXT_PUBLIC_SENTRY_DSN",
-        "NODE_ENV",
-        "OTEL_ENABLED",
-        "OTEL_SERVICE_NAME",
-        "PORT",
         "REST_APL_ENDPOINT",
         "REST_APL_TOKEN",
         "SECRET_KEY",
         "SENTRY_AUTH_TOKEN",
-        "SENTRY_ORG",
         "SENTRY_PROJECT",
         "REDIS_URL",
-        "OTEL_ACCESS_TOKEN"
+        "OTEL_ACCESS_TOKEN",
+        "OTEL_TENANT_DOMAIN_ALLOWLIST",
+        "OTEL_METRICS_FLUSH_TIMEOUT_MILIS"
       ]
     },
-    "test": {
+    "e2e": {
       "env": ["TEST_SALEOR_API_URL", "E2E_USER_NAME", "E2E_USER_PASSWORD"]
     }
   }

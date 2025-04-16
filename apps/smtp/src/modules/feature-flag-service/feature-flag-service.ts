@@ -25,6 +25,7 @@ export class FeatureFlagService {
       logger.debug("No cached value, fetching version from the API");
       this.saleorVersion = await fetchSaleorVersion(this.client);
     }
+
     return this.saleorVersion;
   };
 
@@ -33,7 +34,8 @@ export class FeatureFlagService {
     const saleorVersion = await this.getSaleorVersion();
     const flags = getFeatureFlags({ saleorVersion });
 
-    logger.debug({ flags }, "Feature flags checked");
+    logger.debug({ flags: flags }, "Feature flags checked");
+
     return flags;
   };
 }

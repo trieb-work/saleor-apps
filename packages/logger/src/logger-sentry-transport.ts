@@ -7,12 +7,15 @@ const loggerLevelToSentryLevel = (level: string): SeverityLevel => {
     case "fatal":
     case "error":
       return "error";
+
     case "warn":
       return "warning";
+
     case "silly":
     case "debug":
     case "trace":
       return "debug";
+
     case "info":
       return "info";
   }
@@ -25,10 +28,12 @@ const levelToBreadcrumbType = (level: string) => {
     case "error":
     case "fatal":
       return "error";
+
     case "debug":
     case "trace":
     case "silly":
       return "debug";
+
     case "info":
     default:
       return "default";
@@ -37,7 +42,7 @@ const levelToBreadcrumbType = (level: string) => {
 
 export const attachLoggerSentryTransport = (logger: Logger<ILogObj>) => {
   logger.attachTransport((log) => {
-    const { message, attributes, _meta, ...inheritedAttributes } = log as ILogObj & {
+    const { message, attributes } = log as ILogObj & {
       message: string;
       attributes: Record<string, unknown>;
     };
@@ -53,7 +58,7 @@ export const attachLoggerSentryTransport = (logger: Logger<ILogObj>) => {
         message: message,
         type: levelToBreadcrumbType(log._meta.logLevelName),
         level: loggerLevelToSentryLevel(log._meta.logLevelName),
-        // @ts-ignore - Sentry only allows number type, but ISOString is valid
+        // @ts-expect-error - Sentry only allows number type, but ISOString is valid
         timestamp: log._meta.date.toISOString(),
         data: attributes,
       });

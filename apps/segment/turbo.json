@@ -1,22 +1,23 @@
 {
-  "$schema": "https://turbo.build/schema.v1.json",
+  "$schema": "https://turbo.build/schema.v2.json",
   "extends": ["//"],
-  "pipeline": {
+  "tasks": {
     "deploy": {
       "env": [
         "ALLOWED_DOMAIN_PATTERN",
         "APL",
         "APP_API_BASE_URL",
         "APP_IFRAME_BASE_URL",
-        "PORT",
+        "AWS_ACCESS_KEY_ID",
+        "AWS_REGION",
+        "AWS_SECRET_ACCESS_KEY",
+        "DYNAMODB_MAIN_TABLE_NAME",
+        "FILE_APL_PATH",
+        "MANIFEST_APP_ID",
+        "NEXT_PUBLIC_SENTRY_DSN",
         "REST_APL_ENDPOINT",
         "REST_APL_TOKEN",
         "SECRET_KEY",
-        "NEXT_PUBLIC_SENTRY_DSN",
-        "FILE_APL_PATH",
-        "MANIFEST_APP_ID",
-        "SENTRY_ORG",
-        "SENTRY_PROJECT",
         "SENTRY_AUTH_TOKEN",
         "DYNAMODB_MAIN_TABLE_NAME",
         "AWS_REGION",

@@ -1,8 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useDashboardNotification } from "@saleor/apps-shared";
+import { useDashboardNotification } from "@saleor/apps-shared/use-dashboard-notification";
 import { Box, Button, Text } from "@saleor/macaw-ui";
 import { Input, Select } from "@saleor/react-hook-form-macaw";
-import React, { useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useForm } from "react-hook-form";
 
 import { awsRegionList } from "../file-storage/s3/aws-region-list";
@@ -74,6 +74,7 @@ export const ConnectedS3ConfigurationForm = () => {
     onError({ message }) {
       if (message) {
         notifyError("Error", message);
+
         return;
       }
       notifyError("Error", "Failed to update, please refresh and try again");
@@ -96,14 +97,14 @@ export const ConnectedS3ConfigurationForm = () => {
     async (data: S3BucketConfiguration) => {
       mutate(data);
     },
-    [mutate]
+    [mutate],
   );
 
   const handleValidate = useCallback(
     async (data: S3BucketConfiguration) => {
       testConfigurationMutate(data);
     },
-    [testConfigurationMutate]
+    [testConfigurationMutate],
   );
 
   const formData: S3BucketConfiguration = useMemo(() => {

@@ -1,4 +1,4 @@
-import * as Sentry from "@sentry/nextjs";
+import { captureException } from "@sentry/nextjs";
 import { LineItemModel } from "avatax/lib/models/LineItemModel";
 import Decimal from "decimal.js-light";
 
@@ -24,16 +24,17 @@ export class AvataxCalculateTaxesPayloadLinesTransformer {
       }, new Decimal(0));
   }
 
-  /**
-   * Method name is temporary -> replace with "transform" later
-   * This method is including extra fields that will be added in SHOPX-1145
-   */
-  transformWithDiscountType(
-    taxBase: TaxBaseFragment,
-    config: AvataxConfig,
-    matches: AvataxTaxCodeMatches,
-    discountsStrategy: AutomaticallyDistributedProductLinesDiscountsStrategy,
-  ) {
+  transform({
+    taxBase,
+    config,
+    matches,
+    discountsStrategy,
+  }: {
+    taxBase: TaxBaseFragment;
+    config: AvataxConfig;
+    matches: AvataxTaxCodeMatches;
+    discountsStrategy: AutomaticallyDistributedProductLinesDiscountsStrategy;
+  }) {
     const avataxProductLine = new AvataxProductLineCalculateTaxesFactory();
     const areLinesDiscounted = discountsStrategy.areLinesDiscounted(taxBase.discounts);
 
@@ -55,7 +56,7 @@ export class AvataxCalculateTaxesPayloadLinesTransformer {
         .toNumber();
 
       if (shippingAmountMinusDiscounts < 0) {
-        Sentry.captureException(
+        captureException(
           new Error("Saleor returned shipping discounts with higher values than shipping amount"),
         );
       }

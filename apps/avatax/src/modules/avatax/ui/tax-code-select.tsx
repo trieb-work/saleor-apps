@@ -1,4 +1,4 @@
-import { useDashboardNotification } from "@saleor/apps-shared";
+import { useDashboardNotification } from "@saleor/apps-shared/use-dashboard-notification";
 import { Box, Input, Spinner } from "@saleor/macaw-ui";
 import { useRouter } from "next/router";
 import React from "react";
@@ -87,7 +87,6 @@ const useTaxCodeAutocomplete = ({ taxClassId }: { taxClassId: string }) => {
       prevValueRef.current = debouncedValue;
       updateMutation({ saleorTaxClassId: taxClassId, avataxTaxCode: debouncedValue });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedValue, isTouched, taxCodes, taxClassId, updateMutation]);
 
   React.useEffect(() => {

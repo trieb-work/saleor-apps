@@ -1,7 +1,7 @@
-import { NextWebhookApiHandler, SaleorAsyncWebhook } from "@saleor/app-sdk/handlers/next";
+import { NextJsWebhookHandler, SaleorAsyncWebhook } from "@saleor/app-sdk/handlers/next";
 import { wrapWithLoggerContext } from "@saleor/apps-logger/node";
 import { withSpanAttributes } from "@saleor/apps-otel/src/with-span-attributes";
-import * as Sentry from "@sentry/nextjs";
+import { captureException } from "@sentry/nextjs";
 import { gql } from "urql";
 
 import { createLogger } from "@/logger";
@@ -48,7 +48,7 @@ export const productUpdatedWebhook = new SaleorAsyncWebhook<ProductUpdatedWebhoo
   query: Subscription,
 });
 
-const handler: NextWebhookApiHandler<ProductUpdatedWebhookPayloadFragment> = async (
+const handler: NextJsWebhookHandler<ProductUpdatedWebhookPayloadFragment> = async (
   req,
   res,
   context,
@@ -61,7 +61,7 @@ const handler: NextWebhookApiHandler<ProductUpdatedWebhookPayloadFragment> = asy
 
   if (!payload.product) {
     logger.warn("Product not found in payload");
-    Sentry.captureException("Product not found in payload");
+    captureException("Product not found in payload");
 
     return res.status(500).end();
   }

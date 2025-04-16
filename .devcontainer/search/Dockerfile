@@ -9,5 +9,3 @@ WORKDIR /app
 # This is needed so pnpm-store volume is created with correct permissions (see docker-compose.yml)
 RUN mkdir -p /app/.pnpm-store
 RUN chown -R node:node /app/.pnpm-store
-
-RUN pnpm install --frozen-lockfile --filter=saleor-app-search

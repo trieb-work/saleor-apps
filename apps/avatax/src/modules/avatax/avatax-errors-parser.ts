@@ -1,9 +1,10 @@
-import * as Sentry from "@sentry/nextjs";
+import { captureException } from "@sentry/nextjs";
 import { z } from "zod";
 
 import { BaseError } from "../../error";
 import {
   AvataxEntityNotFoundError,
+  AvataxForbiddenAccessError,
   AvataxGetTaxError,
   AvataxInvalidAddressError,
   AvataxInvalidCredentialsError,
@@ -25,6 +26,7 @@ export class AvataxErrorsParser {
       "StringLengthError",
       "EntityNotFoundError",
       "TransactionAlreadyCancelled",
+      "PermissionRequired",
     ]),
     details: z.array(
       z.object({
@@ -36,7 +38,7 @@ export class AvataxErrorsParser {
     ),
   });
 
-  parse(err: unknown, injectedErrorCapture = Sentry.captureException) {
+  parse(err: unknown, injectedErrorCapture = captureException) {
     const parsedError = AvataxErrorsParser.schema.safeParse(err);
 
     if (!parsedError.success) {
@@ -56,12 +58,15 @@ export class AvataxErrorsParser {
       case "InvalidAddress": {
         return AvataxInvalidAddressError.normalize(parsedError);
       }
+
       case "GetTaxError": {
         return AvataxGetTaxError.normalize(parsedError);
       }
+
       case "AuthenticationException": {
         return AvataxInvalidCredentialsError.normalize(parsedError);
       }
+
       case "StringLengthError": {
         return new AvataxStringLengthError(parsedError.data.code, {
           props: {
@@ -69,6 +74,7 @@ export class AvataxErrorsParser {
           },
         });
       }
+
       case "EntityNotFoundError": {
         return new AvataxEntityNotFoundError(parsedError.data.code, {
           props: {
@@ -76,6 +82,7 @@ export class AvataxErrorsParser {
           },
         });
       }
+
       case "TransactionAlreadyCancelled": {
         return new AvataxTransactionAlreadyCancelledError(parsedError.data.code, {
           props: {
@@ -83,8 +90,18 @@ export class AvataxErrorsParser {
           },
         });
       }
+
+      case "PermissionRequired": {
+        return new AvataxForbiddenAccessError(parsedError.data.code, {
+          props: {
+            description: parsedError.data.details[0].description,
+          },
+        });
+      }
+
       default: {
         assertUnreachableWithoutThrow(parsedError.data.code);
+
         return normalizeAvaTaxError(err);
       }
     }

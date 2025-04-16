@@ -1,30 +1,99 @@
 # saleor-app-search
 
-## 1.24.1
+## 1.23.9
 
 ### Patch Changes
 
-- Updated dependencies [8154e9e9]
-  - @saleor/apps-otel@2.1.0
+- e3c75265: Add new `ATTR_SERVICE_INSTANCE_ID` OTEL attribute to app instrumentation.
+- 4c5c63d5: Use TypeScript unions instead of enums in types generated from Graphql files.
+- Updated dependencies [e3c75265]
+- Updated dependencies [b4ed42c9]
+- Updated dependencies [e3c75265]
+- Updated dependencies [b4ed42c9]
+  - @saleor/apps-otel@2.2.0
+  - @saleor/apps-shared@1.12.3
+  - @saleor/apps-logger@1.5.5
 
-## 1.24.0
-
-### Minor Changes
-
-- 3c4358ae: Setup OTEL via instrumentation hook. After this change app will use [official way](https://nextjs.org/docs/14/app/building-your-application/optimizing/open-telemetry) of setting up OTEL. There are no visible changes to the end user.
+## 1.23.8
 
 ### Patch Changes
 
-- Updated dependencies [3c4358ae]
-- Updated dependencies [23a31eb4]
-  - @saleor/apps-otel@2.0.0
-  - @saleor/apps-logger@1.5.0
+- 94c52129: Update to Next.js 15
+  - @saleor/apps-logger@1.5.4
+  - @saleor/apps-otel@2.1.5
+  - @saleor/react-hook-form-macaw@0.2.14
+  - @saleor/sentry-utils@0.2.4
+  - @saleor/apps-shared@1.12.2
+  - @saleor/apps-ui@1.2.12
+  - @saleor/webhook-utils@0.2.5
+
+## 1.23.7
+
+### Patch Changes
+
+- Updated dependencies [1aff5e42]
+  - @saleor/apps-logger@1.5.4
+  - @saleor/apps-otel@2.1.5
+
+## 1.23.6
+
+### Patch Changes
+
+- a76465fb: Update `@saleor/app-sdk` to `v1.0.0`
+- Updated dependencies [a76465fb]
+  - @saleor/apps-logger@1.5.3
+  - @saleor/apps-otel@2.1.4
+
+## 1.23.5
+
+### Patch Changes
+
+- 339518c2: Fixed how we initialize Sentry SDK for API routes when runtime is Node.js. After this change we will use `NodeClient` directly from Sentry SDK to avoid interfering with our OTEL setup. We also removed not needed Sentry integration for edge runtime
+
+## 1.23.4
+
+### Patch Changes
+
+- c8e61ac2: Updated Sentry to 9.6.1
+- da9899d5: Cleanup deps, peerDeps & devDependencies for package
+- Updated dependencies [da9899d5]
+  - @saleor/react-hook-form-macaw@0.2.14
+  - @saleor/webhook-utils@0.2.5
+  - @saleor/apps-logger@1.5.2
+  - @saleor/apps-shared@1.12.2
+  - @saleor/apps-otel@2.1.3
+  - @saleor/apps-ui@1.2.12
+  - @saleor/sentry-utils@0.2.4
+
+## 1.23.3
+
+### Patch Changes
+
+- Updated dependencies [6e94e99c]
+  - @saleor/apps-otel@2.1.2
+
+## 1.23.2
+
+### Patch Changes
+
+- 996d9be1: Use [PNPM catalogs](https://pnpm.io/catalogs) feature to ensure that dependencies are in sync between different packages in monorepo.
+- aa1c7597: Added new attributes to OTEL setup - it will allow better GitHub integration with our OTEL provider
+- Updated dependencies [996d9be1]
+- Updated dependencies [aa1c7597]
+  - @saleor/react-hook-form-macaw@0.2.13
+  - @saleor/webhook-utils@0.2.4
+  - @saleor/apps-logger@1.5.1
+  - @saleor/apps-shared@1.12.1
+  - @saleor/apps-otel@2.1.1
+  - @saleor/apps-ui@1.2.11
+  - @saleor/sentry-utils@0.2.4
 
 ## 1.23.1
 
 ### Patch Changes
 
-- 1e7884c6: Adding a default hash key to redis to make the apps allow to run on the same redis instance
+- Updated dependencies [8154e9e9]
+  - @saleor/apps-otel@2.1.0
 
 ## 1.23.0
 
