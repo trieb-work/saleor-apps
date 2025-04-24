@@ -1,5 +1,11 @@
 # saleor-app-search
 
+## 1.24.2
+
+### Patch Changes
+
+- 76e21f24: fixing style / imports
+
 ## 1.23.9
 
 ### Patch Changes

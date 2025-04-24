@@ -1,5 +1,11 @@
 # saleor-app-products-feed
 
+## 1.22.10
+
+### Patch Changes
+
+- 76e21f24: fixing style / imports
+
 ## 1.22.9
 
 ### Patch Changes
