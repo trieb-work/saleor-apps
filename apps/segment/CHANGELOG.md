@@ -1,5 +1,11 @@
 # saleor-app-segment
 
+## 2.1.10
+
+### Patch Changes
+
+- 76e21f24: fixing style / imports
+
 ## 2.1.9
 
 ### Patch Changes

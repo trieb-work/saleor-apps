@@ -1,6 +1,6 @@
 {
   "name": "saleor-app-search",
-  "version": "1.24.1",
+  "version": "1.24.2",
   "private": true,
   "type": "module",
   "scripts": {
@@ -54,8 +54,8 @@
     "react-dom": "catalog:",
     "react-helmet": "^6.1.0",
     "react-hook-form": "^7.43.9",
-    "urql": "catalog:",
     "redis": "^4.7.0",
+    "urql": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {

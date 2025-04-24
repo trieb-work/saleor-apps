@@ -1,5 +1,11 @@
 # saleor-app-klaviyo
 
+## 1.14.2
+
+### Patch Changes
+
+- 76e21f24: fixing style / imports
+
 ## 1.13.9
 
 ### Patch Changes

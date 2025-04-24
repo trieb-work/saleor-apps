@@ -1,5 +1,11 @@
 # saleor-app-smtp
 
+## 1.4.2
+
+### Patch Changes
+
+- 76e21f24: fixing style / imports
+
 ## 1.3.9
 
 ### Patch Changes

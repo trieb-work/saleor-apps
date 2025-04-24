@@ -1,5 +1,11 @@
 # saleor-app-payment-stripe
 
+## 0.0.3
+
+### Patch Changes
+
+- 76e21f24: fixing style / imports
+
 ## 0.0.2
 
 ### Patch Changes
