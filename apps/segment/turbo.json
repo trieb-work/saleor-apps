@@ -18,6 +18,8 @@
         "REST_APL_ENDPOINT",
         "REST_APL_TOKEN",
         "SECRET_KEY",
+        "SENTRY_ORG",
+        "SENTRY_PROJECT",
         "SENTRY_AUTH_TOKEN",
         "DYNAMODB_MAIN_TABLE_NAME",
         "AWS_REGION",

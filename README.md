@@ -102,7 +102,7 @@ To add new ADR follow [the guide](https://github.com/npryce/adr-tools).
 
 ## Contributing
 
-We love your contributions and do our best to provide you with mentorship and support. However, please keep in mind that `saleor/apps` monorepo is used by Saleor to host apps in Saleor infrastructure. While the code remains open source, the decisions in this repository are made to enable Saleor to maintain features needed by it's business goals. 
+We love your contributions and do our best to provide you with mentorship and support. However, please keep in mind that `saleor/apps` monorepo is used by Saleor to host apps in Saleor infrastructure. While the code remains open source, the decisions in this repository are made to enable Saleor to maintain features needed by it's business goals.
 
 If you are looking for an issue to tackle, take a look at issues labeled [`Good first issue`](https://github.com/saleor/apps/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22+) and [`Help wanted`](https://github.com/saleor/apps/issues?q=is%3Aopen+is%3Aissue+label%3A%22help+wanted%22).
 
@@ -119,4 +119,3 @@ Repository contains [Devcontainers](https://containers.dev/) setup which include
 ### APLs
 
 Apps follow BYOA (bring your own APL) approach. Minimal set of APLs are implemented in the source code, to avoid maintaining not used dependencies and increasing bundle size. You may want to use other APL client, like Redis. In such case, please ensure your fork does the job. Usually apps contain single file that imports APL from `@saleor/app-sdk`. Your fork can ensure this file contains your own APL setup
-

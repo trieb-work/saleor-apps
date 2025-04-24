@@ -1,7 +1,7 @@
 import { APL } from "@saleor/app-sdk/APL";
 import { FileAPL } from "@saleor/app-sdk/APL/file";
-import { SaleorCloudAPL } from "@saleor/app-sdk/APL/saleor-cloud";
 import { RedisAPL } from "@saleor/app-sdk/APL/redis";
+import { SaleorCloudAPL } from "@saleor/app-sdk/APL/saleor-cloud";
 import { SaleorApp } from "@saleor/app-sdk/saleor-app";
 import { createClient } from "redis";
 

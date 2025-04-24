@@ -15,6 +15,7 @@
         "SECRET_KEY",
         "SENTRY_AUTH_TOKEN",
         "SENTRY_ORG",
+        "SENTRY_PROJECT",
         "NEXT_PUBLIC_SENTRY_DSN",
         "REDIS_URL",
         "OTEL_ACCESS_TOKEN"

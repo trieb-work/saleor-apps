@@ -1,8 +1,8 @@
 import { APL } from "@saleor/app-sdk/APL";
 import { FileAPL } from "@saleor/app-sdk/APL/file";
+import { RedisAPL } from "@saleor/app-sdk/APL/redis";
 import { SaleorCloudAPL } from "@saleor/app-sdk/APL/saleor-cloud";
 import { UpstashAPL } from "@saleor/app-sdk/APL/upstash";
-import { RedisAPL } from "@saleor/app-sdk/APL/redis";
 import { SaleorApp } from "@saleor/app-sdk/saleor-app";
 import { createClient } from "redis";
 
