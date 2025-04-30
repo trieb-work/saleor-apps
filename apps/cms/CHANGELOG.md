@@ -1,5 +1,11 @@
 # saleor-app-cms
 
+## 2.12.3
+
+### Patch Changes
+
+- 71329119: Adding redis error handling as needed to keep saleor app reactive
+
 ## 2.12.2
 
 ### Patch Changes

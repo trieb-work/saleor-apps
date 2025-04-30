@@ -1,5 +1,11 @@
 # saleor-app-search
 
+## 1.24.3
+
+### Patch Changes
+
+- 71329119: Adding redis error handling as needed to keep saleor app reactive
+
 ## 1.24.2
 
 ### Patch Changes

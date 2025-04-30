@@ -1,5 +1,11 @@
 # saleor-app-segment
 
+## 2.1.11
+
+### Patch Changes
+
+- 71329119: Adding redis error handling as needed to keep saleor app reactive
+
 ## 2.1.10
 
 ### Patch Changes

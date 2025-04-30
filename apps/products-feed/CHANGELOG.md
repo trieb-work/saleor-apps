@@ -1,10 +1,17 @@
 # saleor-app-products-feed
 
+## 1.23.1
+
+### Patch Changes
+
+- 71329119: Adding redis error handling as needed to keep saleor app reactive
+
 ## 1.22.10
 
 ### Patch Changes
 
 - 76e21f24: fixing style / imports
+
 ## 1.23.0
 
 ### Minor Changes
