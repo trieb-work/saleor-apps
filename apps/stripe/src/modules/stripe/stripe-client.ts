@@ -11,12 +11,12 @@ import pkg from "@/package.json";
 export class StripeClient {
   readonly nativeClient: Stripe;
 
-  private constructor(nativeClient: Stripe) {
+  constructor(nativeClient: Stripe) {
     this.nativeClient = nativeClient;
   }
 
   static createFromRestrictedKey(key: StripeRestrictedKey) {
-    const nativeClient = new Stripe(key.keyValue, {
+    const nativeClient = new Stripe(key, {
       typescript: true,
       httpClient: Stripe.createFetchHttpClient(fetch), // this allow us to mock the fetch
       appInfo: {

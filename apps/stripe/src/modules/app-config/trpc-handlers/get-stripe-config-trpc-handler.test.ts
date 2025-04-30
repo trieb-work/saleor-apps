@@ -1,5 +1,5 @@
 import { err, ok } from "neverthrow";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { mockedAppConfigRepo } from "@/__tests__/mocks/app-config-repo";
 import {
@@ -32,15 +32,12 @@ const getTestCaller = () => {
       token: mockedAppToken,
       configRepo: mockedAppConfigRepo,
       apiClient: mockedGraphqlClient,
+      appUrl: "https://localhost:3000",
     }),
   };
 };
 
 describe("GetStripeConfigTrpcHandler", () => {
-  beforeEach(() => {
-    vi.resetAllMocks();
-  });
-
   it("Returns serialized config if found in repo", async () => {
     const { caller } = getTestCaller();
 
@@ -48,10 +45,10 @@ describe("GetStripeConfigTrpcHandler", () => {
 
     expect(result).toMatchInlineSnapshot(`
       StripeFrontendConfig {
-        "id": "config-id",
+        "id": "81f323bd-91e2-4838-ab6e-5affd81ffc3b",
         "name": "config-name",
         "publishableKey": "pk_live_1",
-        "restrictedKey": "...ve_1",
+        "restrictedKey": "...GGGG",
       }
     `);
   });

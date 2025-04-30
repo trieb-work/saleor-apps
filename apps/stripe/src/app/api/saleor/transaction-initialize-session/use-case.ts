@@ -2,15 +2,17 @@ import { captureException } from "@sentry/nextjs";
 import { err, ok, Result } from "neverthrow";
 import Stripe from "stripe";
 
-import {
-  parseTransactionInitializeSessionEventData,
-  TransactionInitializeSessionEventData,
-} from "@/app/api/saleor/transaction-initialize-session/event-data-parser";
 import { TransactionInitializeSessionEventFragment } from "@/generated/graphql";
 import { createLogger } from "@/lib/logger";
-import { AppConfigRepo } from "@/modules/app-config/app-config-repo";
+import { AppConfigRepo } from "@/modules/app-config/repositories/app-config-repo";
+import { ResolvedTransationFlow } from "@/modules/resolved-transaction-flow";
 import { SaleorApiUrl } from "@/modules/saleor/saleor-api-url";
 import { SaleorMoney } from "@/modules/saleor/saleor-money";
+import {
+  createSaleorTransactionFlow,
+  SaleorTransationFlow,
+} from "@/modules/saleor/saleor-transaction-flow";
+import { createSaleorTransactionId } from "@/modules/saleor/saleor-transaction-id";
 import {
   AppIsNotConfiguredResponse,
   BrokenAppResponse,
@@ -22,13 +24,22 @@ import {
   StripeClientSecretValidationError,
 } from "@/modules/stripe/stripe-client-secret";
 import { StripeMoney } from "@/modules/stripe/stripe-money";
+import { mapStripeCreatePaymentIntentErrorToApiError } from "@/modules/stripe/stripe-payment-intent-api-error";
 import {
   createStripePaymentIntentId,
   StripePaymentIntentId,
   StripePaymentIntentValidationError,
 } from "@/modules/stripe/stripe-payment-intent-id";
 import { IStripePaymentIntentsApiFactory } from "@/modules/stripe/types";
+import { RecordedTransaction } from "@/modules/transactions-recording/domain/recorded-transaction";
+import { TransactionRecorderRepo } from "@/modules/transactions-recording/repositories/transaction-recorder-repo";
 
+import {
+  parseTransactionInitializeSessionEventData,
+  TransactionInitializeSessionEventData,
+  TransactionInitializeSessionEventDataError,
+} from "./event-data-parser";
+import { resolvePaymentMethodFromEventData } from "./payment-method-resolver";
 import {
   TransactionInitalizeSessionUseCaseResponses,
   TransactionInitalizeSessionUseCaseResponsesType,
@@ -43,18 +54,22 @@ export class TransactionInitializeSessionUseCase {
   private logger = createLogger("TransactionInitializeSessionUseCase");
   private appConfigRepo: AppConfigRepo;
   private stripePaymentIntentsApiFactory: IStripePaymentIntentsApiFactory;
+  private transactionRecorder: TransactionRecorderRepo;
 
   constructor(deps: {
     appConfigRepo: AppConfigRepo;
     stripePaymentIntentsApiFactory: IStripePaymentIntentsApiFactory;
+    transactionRecorder: TransactionRecorderRepo;
   }) {
     this.appConfigRepo = deps.appConfigRepo;
     this.stripePaymentIntentsApiFactory = deps.stripePaymentIntentsApiFactory;
+    this.transactionRecorder = deps.transactionRecorder;
   }
 
   private prepareStripeCreatePaymentIntentParams(args: {
     eventAction: TransactionInitializeSessionEventFragment["action"];
     eventData: TransactionInitializeSessionEventData;
+    selectedPaymentMethodOptions: Stripe.PaymentIntentCreateParams.PaymentMethodOptions;
   }): Result<Stripe.PaymentIntentCreateParams, InstanceType<typeof StripeMoney.ValdationError>> {
     return StripeMoney.createFromSaleorAmount({
       amount: args.eventAction.amount,
@@ -70,6 +85,9 @@ export class TransactionInitializeSessionUseCase {
         automatic_payment_methods: {
           enabled: true,
         },
+        payment_method_options: {
+          ...args.selectedPaymentMethodOptions,
+        },
       };
     });
   }
@@ -79,7 +97,7 @@ export class TransactionInitializeSessionUseCase {
   ): Result<
     [SaleorMoney, StripePaymentIntentId, StripeClientSecret],
     | InstanceType<typeof StripePaymentIntentValidationError>
-    | InstanceType<typeof SaleorMoney.ValdationError>
+    | InstanceType<typeof SaleorMoney.ValidationError>
     | InstanceType<typeof StripeClientSecretValidationError>
   > {
     return Result.combine([
@@ -92,27 +110,77 @@ export class TransactionInitializeSessionUseCase {
     ]);
   }
 
-  async execute(args: {
-    channelId: string;
-    appId: string;
-    saleorApiUrl: SaleorApiUrl;
-    event: TransactionInitializeSessionEventFragment;
-  }): Promise<UseCaseExecuteResult> {
-    const { channelId, appId, saleorApiUrl, event } = args;
-    const eventDataResult = parseTransactionInitializeSessionEventData(event.data);
+  private handleCreatePaymentIntentError(
+    error: unknown,
+    resolvedTransactionFlow: ResolvedTransationFlow,
+    saleorEventAmount: number,
+  ): UseCaseExecuteResult {
+    const mappedError = mapStripeCreatePaymentIntentErrorToApiError(error);
 
-    if (eventDataResult.isErr()) {
+    this.logger.error("Failed to create payment intent", { error: mappedError });
+
+    if (resolvedTransactionFlow === "AUTHORIZATION") {
       return ok(
-        new TransactionInitalizeSessionUseCaseResponses.ChargeFailure({
-          message: "Storefront sent invalid data",
-          error: eventDataResult.error,
-          saleorEventAmount: event.action.amount,
+        new TransactionInitalizeSessionUseCaseResponses.AuthorizationFailure({
+          error: mappedError,
+          saleorEventAmount: saleorEventAmount,
         }),
       );
     }
 
+    return ok(
+      new TransactionInitalizeSessionUseCaseResponses.ChargeFailure({
+        error: mappedError,
+        saleorEventAmount: saleorEventAmount,
+      }),
+    );
+  }
+
+  private handleEventDataError(
+    error: TransactionInitializeSessionEventDataError,
+    saleorTransactionFlow: SaleorTransationFlow,
+    saleorEventAmount: number,
+  ): UseCaseExecuteResult {
+    this.logger.error("Failed to parse event data", { error });
+
+    if (saleorTransactionFlow === "AUTHORIZATION") {
+      return ok(
+        new TransactionInitalizeSessionUseCaseResponses.AuthorizationFailure({
+          error,
+          saleorEventAmount,
+        }),
+      );
+    }
+
+    return ok(
+      new TransactionInitalizeSessionUseCaseResponses.ChargeFailure({
+        error,
+        saleorEventAmount,
+      }),
+    );
+  }
+
+  async execute(args: {
+    appId: string;
+    saleorApiUrl: SaleorApiUrl;
+    event: TransactionInitializeSessionEventFragment;
+  }): Promise<UseCaseExecuteResult> {
+    const { appId, saleorApiUrl, event } = args;
+
+    const saleorTransactionFlow = createSaleorTransactionFlow(event.action.actionType);
+
+    const eventDataResult = parseTransactionInitializeSessionEventData(event.data);
+
+    if (eventDataResult.isErr()) {
+      return this.handleEventDataError(
+        eventDataResult.error,
+        saleorTransactionFlow,
+        event.action.amount,
+      );
+    }
+
     const stripeConfigForThisChannel = await this.appConfigRepo.getStripeConfig({
-      channelId,
+      channelId: event.sourceObject.channel.id,
       appId,
       saleorApiUrl,
     });
@@ -127,7 +195,7 @@ export class TransactionInitializeSessionUseCase {
 
     if (!stripeConfigForThisChannel.value) {
       this.logger.warn("Config for channel not found", {
-        channelId,
+        channelId: event.sourceObject.channel.id,
       });
 
       return err(new AppIsNotConfiguredResponse());
@@ -143,9 +211,16 @@ export class TransactionInitializeSessionUseCase {
       params: args.event.action,
     });
 
+    const selectedPaymentMethod = resolvePaymentMethodFromEventData(eventDataResult.value);
+
+    const resolvedTransactionFlow =
+      selectedPaymentMethod.getResolvedTransactionFlow(saleorTransactionFlow);
+
     const stripePaymentIntentParamsResult = this.prepareStripeCreatePaymentIntentParams({
       eventData: eventDataResult.value,
       eventAction: event.action,
+      selectedPaymentMethodOptions:
+        selectedPaymentMethod.getCreatePaymentIntentMethodOptions(saleorTransactionFlow),
     });
 
     if (stripePaymentIntentParamsResult.isErr()) {
@@ -159,37 +234,68 @@ export class TransactionInitializeSessionUseCase {
     });
 
     if (createPaymentIntentResult.isErr()) {
-      // TODO: handle error properly
+      return this.handleCreatePaymentIntentError(
+        createPaymentIntentResult.error,
+        resolvedTransactionFlow,
+        event.action.amount,
+      );
+    }
+
+    const stripePaymentIntent = createPaymentIntentResult.value;
+
+    this.logger.debug("Stripe created payment intent", { stripeResponse: stripePaymentIntent });
+
+    const mappedResponseResult = this.mapStripePaymentIntentToWebhookResponse(stripePaymentIntent);
+
+    if (mappedResponseResult.isErr()) {
+      captureException(mappedResponseResult.error);
+      this.logger.error("Failed to map Stripe Payment Intent to webhook response", {
+        error: mappedResponseResult.error,
+      });
+
+      return err(new BrokenAppResponse());
+    }
+
+    const [saleorMoney, stripePaymentIntentId, stripeClientSecret] = mappedResponseResult.value;
+
+    const recordResult = await this.transactionRecorder.recordTransaction(
+      {
+        saleorApiUrl: args.saleorApiUrl,
+        appId: args.appId,
+      },
+      new RecordedTransaction({
+        saleorTransactionId: createSaleorTransactionId(event.transaction.id),
+        stripePaymentIntentId,
+        saleorTransactionFlow: saleorTransactionFlow,
+        resolvedTransactionFlow: resolvedTransactionFlow,
+        selectedPaymentMethod: selectedPaymentMethod.type,
+      }),
+    );
+
+    if (recordResult.isErr()) {
+      this.logger.error("Failed to record transaction", {
+        error: recordResult.error,
+      });
+
+      return err(new BrokenAppResponse());
+    }
+
+    if (resolvedTransactionFlow === "AUTHORIZATION") {
       return ok(
-        new TransactionInitalizeSessionUseCaseResponses.ChargeFailure({
-          message: "Error from Stripe API",
-          error: createPaymentIntentResult.error,
-          saleorEventAmount: event.action.amount,
+        new TransactionInitalizeSessionUseCaseResponses.AuthorizationActionRequired({
+          stripeClientSecret,
+          saleorMoney,
+          stripePaymentIntentId,
         }),
       );
     }
 
-    this.logger.debug("Stripe created payment intent", {
-      stripeResponse: createPaymentIntentResult.value,
-    });
-
-    return this.mapStripePaymentIntentToWebhookResponse(
-      createPaymentIntentResult.value,
-    ).match<UseCaseExecuteResult>(
-      ([saleorMoney, stripePaymentIntentId, stripeClientSecret]) => {
-        return ok(
-          new TransactionInitalizeSessionUseCaseResponses.ChargeActionRequired({
-            stripeClientSecret,
-            saleorMoney,
-            stripePaymentIntentId,
-          }),
-        );
-      },
-      (error) => {
-        captureException(error);
-
-        return err(new BrokenAppResponse());
-      },
+    return ok(
+      new TransactionInitalizeSessionUseCaseResponses.ChargeActionRequired({
+        stripeClientSecret,
+        saleorMoney,
+        stripePaymentIntentId,
+      }),
     );
   }
 }

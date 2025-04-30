@@ -2,24 +2,27 @@ import { withSpanAttributesAppRouter } from "@saleor/apps-otel/src/with-span-att
 import { compose } from "@saleor/apps-shared/compose";
 import { captureException } from "@sentry/nextjs";
 
-import { appConfigPersistence } from "@/lib/app-config-persistence";
 import { withLoggerContext } from "@/lib/logger-context";
+import { appConfigRepoImpl } from "@/modules/app-config/repositories/app-config-repo-impl";
 import { createSaleorApiUrl } from "@/modules/saleor/saleor-api-url";
 import {
   MalformedRequestResponse,
   UnhandledErrorResponse,
 } from "@/modules/saleor/saleor-webhook-responses";
 import { StripePaymentIntentsApiFactory } from "@/modules/stripe/stripe-payment-intents-api-factory";
+import { transactionRecorder } from "@/modules/transactions-recording/repositories/transaction-recorder-impl";
 
 import { TransactionInitializeSessionUseCase } from "./use-case";
 import { transactionInitializeSessionWebhookDefinition } from "./webhook-definition";
 
 const useCase = new TransactionInitializeSessionUseCase({
-  appConfigRepo: appConfigPersistence,
+  appConfigRepo: appConfigRepoImpl,
   stripePaymentIntentsApiFactory: new StripePaymentIntentsApiFactory(),
+  // TODO: change it to use DynamoDB
+  transactionRecorder: transactionRecorder,
 });
 
-const handler = transactionInitializeSessionWebhookDefinition.createHandler(async (req, ctx) => {
+const handler = transactionInitializeSessionWebhookDefinition.createHandler(async (_req, ctx) => {
   try {
     const saleorApiUrlResult = createSaleorApiUrl(ctx.authData.saleorApiUrl);
 
@@ -31,7 +34,6 @@ const handler = transactionInitializeSessionWebhookDefinition.createHandler(asyn
     }
 
     const result = await useCase.execute({
-      channelId: ctx.payload.sourceObject.channel.id,
       appId: ctx.authData.appId,
       saleorApiUrl: saleorApiUrlResult.value,
       event: ctx.payload,

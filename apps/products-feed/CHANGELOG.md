@@ -5,6 +5,11 @@
 ### Patch Changes
 
 - 76e21f24: fixing style / imports
+## 1.23.0
+
+### Minor Changes
+
+- cd397beb: Added support for [Handlebars Helpers](https://github.com/helpers/handlebars-helpers) which adds more flexibility to the template syntax.
 
 ## 1.22.9
 

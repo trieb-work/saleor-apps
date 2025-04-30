@@ -2,7 +2,7 @@ import { err, ok, Result } from "neverthrow";
 
 import { BaseError } from "@/lib/errors";
 import { createLogger } from "@/lib/logger";
-import { AppConfigRepo } from "@/modules/app-config/app-config-repo";
+import { AppConfigRepo } from "@/modules/app-config/repositories/app-config-repo";
 import { SaleorApiUrl } from "@/modules/saleor/saleor-api-url";
 import {
   AppIsNotConfiguredResponse,
@@ -56,6 +56,8 @@ export class PaymentGatewayInitializeSessionUseCase {
 
         return err(new AppIsNotConfiguredResponse());
       }
+
+      // TODO: Save transaction here
 
       return ok(new PaymentGatewayInitializeSessionUseCaseResponses.Success({ pk }));
     }
