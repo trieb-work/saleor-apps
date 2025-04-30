@@ -47,6 +47,11 @@ switch (env.APL) {
       url: env.REDIS_URL,
     });
 
+    // Handle connection errors
+    client.on("error", () => {
+      process.exit(1);
+    });
+
     apl = new RedisAPL({
       client,
       hashCollectionKey: "app-segment",
