@@ -1,16 +1,31 @@
 # saleor-app-segment
 
+## 2.1.12
+
+### Patch Changes
+
+- fe605010: Update DynamoDB Toolbox to > v2, no function changes introduced
+- b07a2e12: Extract DynamoDB APL to shared package
+- Updated dependencies [b07a2e12]
+  - @saleor/apl-dynamo@2.0.0
+  - @saleor/apps-logger@1.6.1
+
 ## 2.1.11
 
 ### Patch Changes
 
-- 71329119: Adding redis error handling as needed to keep saleor app reactive
+- Updated dependencies [00070dc3]
+  - @saleor/apps-shared@1.13.0
 
 ## 2.1.10
 
 ### Patch Changes
 
-- 76e21f24: fixing style / imports
+- c490ca75: Fixed link to Saleor docs. After this change links should point to the newest version of docs without redirects.
+- Updated dependencies [d3702072]
+- Updated dependencies [c68f1e9f]
+  - @saleor/apps-logger@1.6.0
+  - @saleor/apps-otel@2.3.0
 
 ## 2.1.9
 

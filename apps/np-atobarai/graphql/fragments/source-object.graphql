@@ -1,0 +1,76 @@
+fragment SourceObject on OrderOrCheckout {
+  ... on Checkout {
+    __typename
+    id
+    channel {
+      ...Channel
+    }
+    email
+    billingAddress {
+      ...Address
+    }
+    shippingAddress {
+      ...Address
+    }
+    discount {
+      amount
+    }
+    shippingPrice {
+      gross {
+        amount
+      }
+    }
+    lines {
+      __typename
+      quantity
+      unitPrice {
+        gross {
+          amount
+        }
+      }
+      checkoutVariant: variant {
+        sku
+        product {
+          name
+        }
+      }
+    }
+  }
+  ... on Order {
+    __typename
+    id
+    channel {
+      ...Channel
+    }
+    userEmail
+    billingAddress {
+      ...Address
+    }
+    shippingAddress {
+      ...Address
+    }
+    discount {
+      amount
+    }
+    shippingPrice {
+      gross {
+        amount
+      }
+    }
+    lines {
+      __typename
+      quantity
+      unitPrice {
+        gross {
+          amount
+        }
+      }
+      orderVariant: variant {
+        sku
+        product {
+          name
+        }
+      }
+    }
+  }
+}

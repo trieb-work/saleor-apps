@@ -2,13 +2,7 @@ import Stripe from "stripe";
 
 import { mockedStripePaymentIntentId } from "@/__tests__/mocks/mocked-stripe-payment-intent-id";
 
-type Params = {
-  status?: Stripe.PaymentIntent.Status;
-};
-
-export const getMockedPaymentIntentSucceededEvent = (
-  params?: Params,
-): Stripe.PaymentIntentSucceededEvent => {
+export const getMockedPaymentIntentSucceededEvent = (): Stripe.PaymentIntentSucceededEvent => {
   // Stripe returns timestamp in seconds
   const date = new Date(2025, 1, 1).getTime() / 1000;
 
@@ -24,7 +18,7 @@ export const getMockedPaymentIntentSucceededEvent = (
     type: "payment_intent.succeeded",
     data: {
       object: {
-        currency: "usd",
+        currency: "iqd",
         amount_received: 1013,
         amount_capturable: 1511,
         object: "payment_intent",
@@ -61,7 +55,7 @@ export const getMockedPaymentIntentSucceededEvent = (
         source: null,
         statement_descriptor: null,
         statement_descriptor_suffix: null,
-        status: params?.status ?? "succeeded",
+        status: "succeeded",
         transfer_data: null,
         transfer_group: null,
       },

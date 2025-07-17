@@ -1,16 +1,31 @@
 # saleor-app-products-feed
 
+## 2.0.1
+
+### Patch Changes
+
+- @saleor/apps-logger@1.6.1
+
+## 2.0.0
+
+### Major Changes
+
+- 57fa563e: Added possibility to scan entire Saleor catalog, without limits. Removed possibility to use the app without configured S3 bucket "in memory"
+
+### Patch Changes
+
+- Updated dependencies [00070dc3]
+  - @saleor/apps-shared@1.13.0
+
 ## 1.23.1
 
 ### Patch Changes
 
-- 71329119: Adding redis error handling as needed to keep saleor app reactive
-
-## 1.22.10
-
-### Patch Changes
-
-- 76e21f24: fixing style / imports
+- 608b05f3: Fix logging when app is calling Google. After this change channelSlug and saleorApiUrl should be visible inside logs.
+- Updated dependencies [d3702072]
+- Updated dependencies [c68f1e9f]
+  - @saleor/apps-logger@1.6.0
+  - @saleor/apps-otel@2.3.0
 
 ## 1.23.0
 
@@ -922,7 +937,7 @@
 ### Minor Changes
 
 - 289b42f: Breaking change for app maintainers: VercelAPL can no longer be set for the app since it's deprecated and will be removed in app-sdk 0.30.0. As a replacement, we recommend using Upstash APL or implementing your own.
-  Read more about APLs: https://github.com/saleor/saleor-app-sdk/blob/main/docs/apl.md
+  Read more about APLs: https://docs.saleor.io/developer/extending/apps/developing-apps/app-sdk/apl
 
 ### Patch Changes
 

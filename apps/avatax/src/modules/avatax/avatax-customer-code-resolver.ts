@@ -10,7 +10,7 @@ const FALLBACK_CUSTOMER_CODE = "0";
 
 type NullableString = string | null | undefined;
 
-// see: docs.saleor.io/docs/3.x/developer/app-store/apps/taxes/avatax/overview#customer-code
+// see: https://docs.saleor.io/developer/app-store/apps/avatax/configuration#customer-code
 export const avataxCustomerCode = {
   resolve({
     avataxCustomerCode,
@@ -30,25 +30,25 @@ export const avataxCustomerCode = {
     source: "Order" | "Checkout";
   }): string {
     if (avataxCustomerCode) {
-      logger.info(`Returning customer code found in the ${source} metadata.`);
+      logger.debug(`Returning customer code found in the ${source} metadata.`);
 
       return avataxCustomerCode;
     }
 
     // TODO: Remove legacy customer code handling after clients migrate to customer code on order / checkout
     if (legacyAvataxCustomerCode) {
-      logger.info("Returning legacy customer code found in the user metadata.");
+      logger.debug("Returning legacy customer code found in the user metadata.");
 
       return legacyAvataxCustomerCode;
     }
 
     if (legacyUserId) {
-      logger.info("Returning user id as legacy customer code");
+      logger.debug("Returning user id as legacy customer code");
 
       return legacyUserId;
     }
 
-    logger.info("Returning fallback customer code.");
+    logger.debug("Returning fallback customer code.");
 
     return FALLBACK_CUSTOMER_CODE;
   },

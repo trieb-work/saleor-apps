@@ -1,6 +1,7 @@
 import { err, ok, Result } from "neverthrow";
 
 import { BaseError } from "@/lib/errors";
+import { StripeEnv } from "@/modules/stripe/stripe-env";
 import { StripePublishableKey } from "@/modules/stripe/stripe-publishable-key";
 import { StripeRestrictedKey } from "@/modules/stripe/stripe-restricted-key";
 import { StripeWebhookSecret } from "@/modules/stripe/stripe-webhook-secret";
@@ -33,6 +34,10 @@ export class StripeConfig {
     this.publishableKey = props.publishableKey;
     this.webhookSecret = props.webhookSecret;
     this.webhookId = props.webhookId;
+  }
+
+  getStripeEnvValue(): StripeEnv {
+    return this.publishableKey.startsWith("pk_test") ? "TEST" : "LIVE";
   }
 
   static create(args: {
@@ -87,6 +92,7 @@ export type StripeFrontendConfigSerializedFields = {
   readonly id: string;
   readonly restrictedKey: string;
   readonly publishableKey: string;
+  readonly webhookStatus?: "missing" | "disabled" | "active";
 };
 
 /**
@@ -98,12 +104,14 @@ export class StripeFrontendConfig implements StripeFrontendConfigSerializedField
   readonly id: string;
   readonly restrictedKey: string;
   readonly publishableKey: string;
+  webhookStatus?: StripeFrontendConfigSerializedFields["webhookStatus"];
 
   private constructor(fields: StripeFrontendConfigSerializedFields) {
     this.name = fields.name;
     this.id = fields.id;
     this.restrictedKey = fields.restrictedKey;
     this.publishableKey = fields.publishableKey;
+    this.webhookStatus = fields.webhookStatus;
   }
 
   private static getMaskedKeyValue(key: StripeRestrictedKey) {

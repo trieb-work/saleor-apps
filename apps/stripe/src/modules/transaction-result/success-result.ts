@@ -1,30 +1,13 @@
-import { SaleorMoney } from "@/modules/saleor/saleor-money";
-import { StripePaymentIntentId } from "@/modules/stripe/stripe-payment-intent-id";
+import { Actions } from "@/generated/app-webhooks-types/transaction-charge-requested";
 
 export class ChargeSuccessResult {
   readonly result = "CHARGE_SUCCESS" as const;
-  readonly actions = [] as const;
-  readonly message = "Payment intent succeeded";
-
-  readonly saleorMoney: SaleorMoney;
-  readonly stripePaymentIntentId: StripePaymentIntentId;
-
-  constructor(args: { saleorMoney: SaleorMoney; stripePaymentIntentId: StripePaymentIntentId }) {
-    this.saleorMoney = args.saleorMoney;
-    this.stripePaymentIntentId = args.stripePaymentIntentId;
-  }
+  readonly actions: Actions = ["REFUND"];
+  readonly message = "Payment intent has been successful";
 }
 
 export class AuthorizationSuccessResult {
   readonly result = "AUTHORIZATION_SUCCESS" as const;
-  readonly actions = ["CHARGE"] as const;
-  readonly message = "Payment intent succeeded";
-
-  readonly saleorMoney: SaleorMoney;
-  readonly stripePaymentIntentId: StripePaymentIntentId;
-
-  constructor(args: { saleorMoney: SaleorMoney; stripePaymentIntentId: StripePaymentIntentId }) {
-    this.saleorMoney = args.saleorMoney;
-    this.stripePaymentIntentId = args.stripePaymentIntentId;
-  }
+  readonly actions: Actions = ["CHARGE", "CANCEL"];
+  readonly message = "Payment intent has been successful";
 }

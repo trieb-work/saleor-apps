@@ -1,16 +1,33 @@
 # saleor-app-search
 
-## 1.24.3
+## 1.23.13
 
 ### Patch Changes
 
-- 71329119: Adding redis error handling as needed to keep saleor app reactive
+- @saleor/apps-logger@1.6.1
 
-## 1.24.2
+## 1.23.12
 
 ### Patch Changes
 
-- 76e21f24: fixing style / imports
+- Updated dependencies [00070dc3]
+  - @saleor/apps-shared@1.13.0
+
+## 1.23.11
+
+### Patch Changes
+
+- c490ca75: Fixed link to Saleor docs. After this change links should point to the newest version of docs without redirects.
+- Updated dependencies [d3702072]
+- Updated dependencies [c68f1e9f]
+  - @saleor/apps-logger@1.6.0
+  - @saleor/apps-otel@2.3.0
+
+## 1.23.10
+
+### Patch Changes
+
+- ec6949ac: Filter inactive variants from "otherVariants" in the Algolia sync.
 
 ## 1.23.9
 
@@ -944,7 +961,7 @@
 ### Minor Changes
 
 - 289b42f: Breaking change for app maintainers: VercelAPL can no longer be set for the app since it's deprecated and will be removed in app-sdk 0.30.0. As a replacement, we recommend using Upstash APL or implementing your own.
-  Read more about APLs: https://github.com/saleor/saleor-app-sdk/blob/main/docs/apl.md
+  Read more about APLs: https://docs.saleor.io/developer/extending/apps/developing-apps/app-sdk/apl
 
 ## 1.1.0
 

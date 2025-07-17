@@ -1,16 +1,32 @@
 # saleor-app-smtp
 
-## 1.4.3
+## 1.3.13
 
 ### Patch Changes
 
-- 71329119: Adding redis error handling as needed to keep saleor app reactive
+- bf66a47c: Fix how we handle SMTP errors in SMTP app. After this change email sender won't be responsible for re-throwing errors. Instead use-case will catch errors and properly report them.
 
-## 1.4.2
+## 1.3.12
 
 ### Patch Changes
 
-- 76e21f24: fixing style / imports
+- @saleor/apps-logger@1.6.1
+
+## 1.3.11
+
+### Patch Changes
+
+- Updated dependencies [00070dc3]
+  - @saleor/apps-shared@1.13.0
+
+## 1.3.10
+
+### Patch Changes
+
+- Updated dependencies [d3702072]
+- Updated dependencies [c68f1e9f]
+  - @saleor/apps-logger@1.6.0
+  - @saleor/apps-otel@2.3.0
 
 ## 1.3.9
 

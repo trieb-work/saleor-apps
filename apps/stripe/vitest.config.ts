@@ -1,8 +1,10 @@
+import react from "@vitejs/plugin-react";
+import { loadEnv } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-  plugins: [tsconfigPaths()],
+  plugins: [react(), tsconfigPaths()],
   test: {
     css: false,
     mockReset: true,
@@ -11,27 +13,39 @@ export default defineConfig({
       {
         extends: true,
         test: {
+          sequence: {
+            shuffle: true,
+          },
           include: ["src/**/*.test.ts"],
-          exclude: ["src/**/*.integration.test.ts"], // exclude integration tests so vitest doesn't run them twice
+          exclude: ["src/__tests__/integration/**"], // exclude integration tests so vitest doesn't run them twice
           name: "unit",
           setupFiles: "./src/__tests__/setup.units.ts",
+          environment: "jsdom",
         },
       },
       {
         extends: true,
         test: {
-          include: ["src/**/*.integration.test.{ts,tsx}"],
+          sequence: {
+            concurrent: false,
+          },
+          globalSetup: "./src/__tests__/integration/global-setup.integration.ts",
+          include: ["src/__tests__/integration/**/*.test.{ts,ts}"],
           name: "integration",
-          setupFiles: "./src/__tests__/setup.integration.ts",
+          setupFiles: "./src/__tests__/integration/setup.integration.ts",
+          env: loadEnv("test", process.cwd(), ""),
+          pool: "threads",
+          poolOptions: {
+            threads: {
+              /*
+               * Without a single thread, tests across the files are re-using the same dynamodb.
+               * If they become slow, we can spawn separate table per suite
+               */
+              singleThread: true,
+            },
+          },
         },
       },
     ],
-    sequence: {
-      /**
-       * Shuffle tests to avoid side effects, where test_2 relies on something that test_1 did.
-       * Now tests will fail a little earlier
-       */
-      shuffle: true,
-    },
   },
 });

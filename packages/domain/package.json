@@ -1,0 +1,40 @@
+{
+  "name": "@saleor/apps-domain",
+  "version": "1.0.1",
+  "type": "module",
+  "exports": {
+    "./saleor-api-url": {
+      "import": "./src/saleor-api-url.ts",
+      "types": "./src/saleor-api-url.ts"
+    }
+  },
+  "scripts": {
+    "check-types": "tsc",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "test": "vitest",
+    "test:ci": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@saleor/errors": "workspace:*",
+    "eslint": "catalog:"
+  },
+  "devDependencies": {
+    "@saleor/app-sdk": "link:../../node_modules/@saleor/app-sdk",
+    "@saleor/eslint-config-apps": "workspace:*",
+    "@saleor/typescript-config-apps": "workspace:*",
+    "@vitest/coverage-v8": "catalog:",
+    "modern-errors": "catalog:",
+    "modern-errors-serialize": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:",
+    "zod": "catalog:"
+  },
+  "peerDependencies": {
+    "@saleor/app-sdk": "catalog:",
+    "modern-errors": "catalog:",
+    "modern-errors-serialize": "catalog:",
+    "zod": "catalog:"
+  }
+}

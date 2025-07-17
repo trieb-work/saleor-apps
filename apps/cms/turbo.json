@@ -13,11 +13,10 @@
         "REST_APL_TOKEN",
         "SECRET_KEY",
         "SENTRY_AUTH_TOKEN",
-        "SENTRY_ORG", 
         "SENTRY_PROJECT",
-        "NEXT_PUBLIC_SENTRY_DSN",
-        "REDIS_URL",
-        "OTEL_ACCESS_TOKEN"
+        "STRAPI_BATCH_SIZE",
+        "STRAPI_MILIS_DELAY_BETWEEN_BATCHES",
+        "REDIS_URL"
       ]
     }
   }

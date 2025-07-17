@@ -1,6 +1,6 @@
 import { useDashboardNotification } from "@saleor/apps-shared/use-dashboard-notification";
-import { Layout } from "@saleor/apps-ui";
-import { Box, Button, Chip, Text, TrashBinIcon } from "@saleor/macaw-ui";
+import { ConfigsList } from "@saleor/apps-ui";
+import { Chip, Text } from "@saleor/macaw-ui";
 import { useRouter } from "next/router";
 
 import {
@@ -13,89 +13,74 @@ type Props = {
   configs: Array<StripeFrontendConfigSerializedFields>;
 };
 
-export const StripeConfigsList = ({ configs, ...props }: Props) => {
+const webhookDisabled = <Text color="warning1">Webhook disabled, app will not work properly</Text>;
+const webhookMissing = <Text color="critical1">Webhook missing, create config again</Text>;
+
+const testEnvChip = (
+  <Chip marginLeft="auto" __backgroundColor="#CC4B00" borderColor="transparent" size="large">
+    <Text __color={"#FFF"} size={1} whiteSpace="nowrap">
+      Stripe test mode
+    </Text>
+  </Chip>
+);
+const liveEnvChip = (
+  <Chip marginLeft={"auto"} size="large" whiteSpace="nowrap">
+    <Text size={1}>Stripe live mode</Text>
+  </Chip>
+);
+
+export const StripeConfigsList = ({ configs }: Props) => {
   const router = useRouter();
   const { notifyError, notifySuccess } = useDashboardNotification();
   const configsList = trpcClient.appConfig.getStripeConfigsList.useQuery();
   const mappings = trpcClient.appConfig.channelsConfigsMapping.useQuery();
-  const { mutate, isLoading } = trpcClient.appConfig.removeStripeConfig.useMutation({
-    onSuccess() {
-      notifySuccess("Configuration deleted");
-    },
-    onError(err) {
-      notifyError("Error deleting config", err.message);
-    },
-    onSettled() {
-      mappings.refetch();
-      configsList.refetch();
-    },
-  });
+  const { mutate: removeStripeConfig, isLoading } =
+    trpcClient.appConfig.removeStripeConfig.useMutation({
+      onSuccess() {
+        notifySuccess("Configuration deleted");
+      },
+      onError(err) {
+        notifyError("Error deleting config", err.message);
+      },
+      onSettled() {
+        mappings.refetch();
+        configsList.refetch();
+      },
+    });
 
   return (
-    <Layout.AppSectionCard
-      footer={
-        <Box display="flex" justifyContent="flex-end">
-          <Button onClick={() => router.push("/config/new")}>Add Stripe configuration</Button>
-        </Box>
-      }
-    >
-      <Box {...props}>
-        {configs.map((config) => {
-          const configInstance = StripeFrontendConfig.createFromSerializedFields(config);
-          const envValue = configInstance.getStripeEnvValue();
+    <ConfigsList
+      onConfigDelete={(id) => {
+        removeStripeConfig({
+          configId: id,
+        });
+      }}
+      configs={configs.map((config) => {
+        const configInstance = StripeFrontendConfig.createFromSerializedFields(config);
+        const envValue = configInstance.getStripeEnvValue();
 
-          const testEnvChip = (
-            <Chip
-              marginLeft={"auto"}
-              backgroundColor="warning1"
-              borderColor="warning1"
-              color="warning1"
-              size="large"
-            >
-              <Text color="warning1" size={1}>
-                {configInstance.getStripeEnvValue()}
-              </Text>
-            </Chip>
-          );
-          const liveEnvChip = (
-            <Chip
-              marginLeft={"auto"}
-              backgroundColor="success1"
-              borderColor="success1"
-              color="success1"
-              size="large"
-            >
-              <Text color="accent1" size={1}>
-                {configInstance.getStripeEnvValue()}
-              </Text>
-            </Chip>
-          );
+        const webhookStatusInfo =
+          configInstance.webhookStatus === "disabled"
+            ? webhookDisabled
+            : configInstance.webhookStatus === "missing"
+            ? webhookMissing
+            : null;
 
-          return (
-            <Box padding={4} key={configInstance.id}>
-              <Box
-                display={"flex"}
-                justifyContent="space-between"
-                width={"100%"}
-                alignItems={"center"}
-              >
-                <Text marginRight={4} display="block">
-                  {configInstance.name}
-                </Text>
-                {envValue === "TEST" ? testEnvChip : liveEnvChip}
-                <Button
-                  disabled={isLoading}
-                  marginLeft={4}
-                  display="block"
-                  icon={<TrashBinIcon color="critical2" />}
-                  variant="tertiary"
-                  onClick={() => mutate({ configId: configInstance.id })}
-                />
-              </Box>
-            </Box>
-          );
-        })}
-      </Box>
-    </Layout.AppSectionCard>
+        return {
+          id: configInstance.id,
+          name: configInstance.name,
+          deleteButtonSlotLeft() {
+            return envValue === "TEST" ? testEnvChip : liveEnvChip;
+          },
+          deleteButtonSlotRight() {
+            return webhookStatusInfo;
+          },
+        };
+      })}
+      onNewConfigAdd={() => {
+        router.push("/config/new");
+      }}
+      isLoading={isLoading}
+    />
   );
 };

@@ -3,12 +3,16 @@ import { AppManifest } from "@saleor/app-sdk/types";
 import { withSpanAttributesAppRouter } from "@saleor/apps-otel/src/with-span-attributes";
 import { compose } from "@saleor/apps-shared/compose";
 
-import { paymentGatewayInitializeSessionWebhookDefinition } from "@/app/api/saleor/payment-gateway-initialize-session/webhook-definition";
-import { transactionInitializeSessionWebhookDefinition } from "@/app/api/saleor/transaction-initialize-session/webhook-definition";
-import { transactionProcessSessionWebhookDefinition } from "@/app/api/saleor/transaction-process-session/webhook-definition";
 import { env } from "@/lib/env";
 import { withLoggerContext } from "@/lib/logger-context";
 import packageJson from "@/package.json";
+
+import { paymentGatewayInitializeSessionWebhookDefinition } from "../webhooks/saleor/payment-gateway-initialize-session/webhook-definition";
+import { transactionCancelationRequestedWebhookDefinition } from "../webhooks/saleor/transaction-cancelation-requested/webhook-definition";
+import { transactionChargeRequestedWebhookDefinition } from "../webhooks/saleor/transaction-charge-requested/webhook-definition";
+import { transactionInitializeSessionWebhookDefinition } from "../webhooks/saleor/transaction-initialize-session/webhook-definition";
+import { transactionProcessSessionWebhookDefinition } from "../webhooks/saleor/transaction-process-session/webhook-definition";
+import { transactionRefundRequestedWebhookDefinition } from "../webhooks/saleor/transaction-refund-requested/webhook-definition";
 
 const handler = createManifestHandler({
   async manifestFactory({ appBaseUrl }) {
@@ -29,9 +33,12 @@ const handler = createManifestHandler({
       extensions: [],
       homepageUrl: "https://github.com/saleor/apps",
       id: env.MANIFEST_APP_ID,
-      name: "Stripe",
+      /**
+       * Can set custom name, e.g. in Development to recognize the app
+       */
+      name: env.APP_NAME,
       permissions: ["HANDLE_PAYMENTS"],
-      requiredSaleorVersion: ">=3.20 <4",
+      requiredSaleorVersion: ">=3.21 <4",
       supportUrl: "https://saleor.io/discord",
       tokenTargetUrl: `${apiBaseUrl}/api/register`,
       version: packageJson.version,
@@ -39,6 +46,9 @@ const handler = createManifestHandler({
         paymentGatewayInitializeSessionWebhookDefinition.getWebhookManifest(apiBaseUrl),
         transactionInitializeSessionWebhookDefinition.getWebhookManifest(apiBaseUrl),
         transactionProcessSessionWebhookDefinition.getWebhookManifest(apiBaseUrl),
+        transactionChargeRequestedWebhookDefinition.getWebhookManifest(apiBaseUrl),
+        transactionCancelationRequestedWebhookDefinition.getWebhookManifest(apiBaseUrl),
+        transactionRefundRequestedWebhookDefinition.getWebhookManifest(apiBaseUrl),
       ],
     };
 

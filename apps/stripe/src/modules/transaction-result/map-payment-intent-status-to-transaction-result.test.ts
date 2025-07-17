@@ -7,7 +7,6 @@ import {
   AuthorizationActionRequiredResult,
   ChargeActionRequiredResult,
 } from "./action-required-result";
-import { AuthorizationFailureResult, ChargeFailureResult } from "./failure-result";
 import { mapPaymentIntentStatusToTransactionResult } from "./map-payment-intent-status-to-transaction-result";
 import { AuthorizationRequestResult, ChargeRequestResult } from "./request-result";
 import { AuthorizationSuccessResult, ChargeSuccessResult } from "./success-result";
@@ -39,18 +38,18 @@ describe("mapPaymentIntentStatusToAppResult", () => {
       },
       {
         status: "canceled",
-        expectedResult: ChargeFailureResult,
+        expectedResult: ChargeActionRequiredResult,
       },
     ])(
-      "maps Stripe status: $status to transactionResult: $expectedResult.name",
+      "maps Stripe PaymentIntent status: $status to transactionResult: $expectedResult.name",
       ({ status, expectedResult }) => {
-        const stripeStatus = createStripePaymentIntentStatus(status)._unsafeUnwrap();
+        const stripeStatus = createStripePaymentIntentStatus(status);
         const result = mapPaymentIntentStatusToTransactionResult(
           stripeStatus,
           resolvedTransactionFlow,
         );
 
-        expect(result).toBe(expectedResult);
+        expect(result).toBeInstanceOf(expectedResult);
       },
     );
   });
@@ -81,7 +80,7 @@ describe("mapPaymentIntentStatusToAppResult", () => {
       },
       {
         status: "canceled",
-        expectedResult: AuthorizationFailureResult,
+        expectedResult: AuthorizationActionRequiredResult,
       },
       {
         status: "requires_capture",
@@ -90,13 +89,13 @@ describe("mapPaymentIntentStatusToAppResult", () => {
     ])(
       "maps Stripe status: $status to transactionResult: $expectedResult.name",
       ({ status, expectedResult }) => {
-        const stripeStatus = createStripePaymentIntentStatus(status)._unsafeUnwrap();
+        const stripeStatus = createStripePaymentIntentStatus(status);
         const result = mapPaymentIntentStatusToTransactionResult(
           stripeStatus,
           resolvedTransactionFlow,
         );
 
-        expect(result).toBe(expectedResult);
+        expect(result).toBeInstanceOf(expectedResult);
       },
     );
   });

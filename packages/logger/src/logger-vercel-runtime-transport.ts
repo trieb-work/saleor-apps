@@ -1,9 +1,10 @@
 import { trace } from "@opentelemetry/api";
+import { BaseError } from "@saleor/errors";
 // don't change to named import - there is a problem with `tsx` script runner (and this file is loaded in webhook migration scripts)
 import * as Sentry from "@sentry/nextjs";
 import { ILogObj, Logger } from "tslog";
 
-import { BaseError, UnknownError } from "./errors";
+import { UnknownError } from "./errors";
 import { LoggerContext } from "./logger-context";
 
 const VercelMaximumLogSizeExceededError = BaseError.subclass("VercelMaximumLogSizeExceededError");
@@ -23,10 +24,8 @@ export const attachLoggerVercelRuntimeTransport = (
     try {
       const { message, attributes, _meta } = log;
 
-      const bodyMessage = log._meta.name ? `[${log._meta.name}] ${message}` : message;
-
       const stringifiedMessage = JSON.stringify({
-        message: bodyMessage,
+        message,
         ...(loggerContext?.getRawContext() ?? {}),
         ...attributes,
         deployment: {
@@ -42,6 +41,10 @@ export const attachLoggerVercelRuntimeTransport = (
           name: process.env.OTEL_SERVICE_NAME,
           version: appVersion,
         },
+        logger: {
+          name: log._meta.name,
+          version: appVersion,
+        },
         _meta: {
           ..._meta,
           // used to filter out log in log drain
@@ -54,7 +57,7 @@ export const attachLoggerVercelRuntimeTransport = (
           new VercelMaximumLogSizeExceededError("Log message is exceeding Vercel limit", {
             props: {
               logName: log._meta.name,
-              logMessage: bodyMessage,
+              logMessage: message,
             },
           }),
         );

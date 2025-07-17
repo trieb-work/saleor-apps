@@ -1,14 +1,11 @@
+import { Actions } from "@/generated/app-webhooks-types/transaction-initialize-session";
 import { BaseError } from "@/lib/errors";
-import { SaleorMoney } from "@/modules/saleor/saleor-money";
-import { StripePaymentIntentId } from "@/modules/stripe/stripe-payment-intent-id";
 import { StripePaymentIntentStatus } from "@/modules/stripe/stripe-payment-intent-status";
 
 export class ChargeActionRequiredResult {
   readonly result = "CHARGE_ACTION_REQUIRED" as const;
-  readonly actions = [] as const;
+  readonly actions: Actions = ["CANCEL"];
 
-  readonly saleorMoney: SaleorMoney;
-  readonly stripePaymentIntentId: StripePaymentIntentId;
   readonly message: string;
 
   private getMessageFromStripeStatus(stripeStatus: StripePaymentIntentStatus) {
@@ -19,6 +16,8 @@ export class ChargeActionRequiredResult {
         return "Payment intent requires confirmation";
       case "requires_payment_method":
         return "Payment intent requires payment method";
+      case "canceled":
+        return "Payment intent was canceled";
       default:
         throw new BaseError(
           `Payment intent status ${stripeStatus} is not supported for CHARGE_ACTION_REQUIRED transaction flow`,
@@ -26,23 +25,15 @@ export class ChargeActionRequiredResult {
     }
   }
 
-  constructor(args: {
-    saleorMoney: SaleorMoney;
-    stripePaymentIntentId: StripePaymentIntentId;
-    stripeStatus: StripePaymentIntentStatus;
-  }) {
-    this.saleorMoney = args.saleorMoney;
-    this.stripePaymentIntentId = args.stripePaymentIntentId;
-    this.message = this.getMessageFromStripeStatus(args.stripeStatus);
+  constructor(stripeStatus: StripePaymentIntentStatus) {
+    this.message = this.getMessageFromStripeStatus(stripeStatus);
   }
 }
 
 export class AuthorizationActionRequiredResult {
   readonly result = "AUTHORIZATION_ACTION_REQUIRED" as const;
-  readonly actions = [] as const;
+  readonly actions: Actions = ["CANCEL"];
 
-  readonly saleorMoney: SaleorMoney;
-  readonly stripePaymentIntentId: StripePaymentIntentId;
   readonly message: string;
 
   private getMessageFromStripeStatus(stripeStatus: StripePaymentIntentStatus) {
@@ -53,6 +44,8 @@ export class AuthorizationActionRequiredResult {
         return "Payment intent requires confirmation";
       case "requires_payment_method":
         return "Payment intent requires payment method";
+      case "canceled":
+        return "Payment intent was canceled";
       default:
         throw new BaseError(
           `Payment intent status ${stripeStatus} is not supported for AUTHORIZATION_ACTION_REQUIRED transaction flow`,
@@ -60,13 +53,7 @@ export class AuthorizationActionRequiredResult {
     }
   }
 
-  constructor(args: {
-    saleorMoney: SaleorMoney;
-    stripePaymentIntentId: StripePaymentIntentId;
-    stripeStatus: StripePaymentIntentStatus;
-  }) {
-    this.saleorMoney = args.saleorMoney;
-    this.stripePaymentIntentId = args.stripePaymentIntentId;
-    this.message = this.getMessageFromStripeStatus(args.stripeStatus);
+  constructor(stripeStatus: StripePaymentIntentStatus) {
+    this.message = this.getMessageFromStripeStatus(stripeStatus);
   }
 }

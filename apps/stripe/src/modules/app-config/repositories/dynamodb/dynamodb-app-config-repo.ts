@@ -1,7 +1,9 @@
+import { Encryptor } from "@saleor/apps-shared/encryptor";
 import { DeleteItemCommand, GetItemCommand, Parser, PutItemCommand } from "dynamodb-toolbox";
 import { QueryCommand } from "dynamodb-toolbox/table/actions/query";
 import { err, ok, Result } from "neverthrow";
 
+import { env } from "@/lib/env";
 import { BaseError } from "@/lib/errors";
 import { createLogger } from "@/lib/logger";
 import { AppRootConfig } from "@/modules/app-config/domain/app-root-config";
@@ -27,22 +29,33 @@ import { createStripePublishableKey } from "@/modules/stripe/stripe-publishable-
 import { createStripeRestrictedKey } from "@/modules/stripe/stripe-restricted-key";
 import { createStripeWebhookSecret } from "@/modules/stripe/stripe-webhook-secret";
 
-// todo: Add pagination to queries
+type ConstructorParams = {
+  entities: {
+    stripeConfig: DynamoDbStripeConfigEntity;
+    channelConfigMapping: DynamoDbChannelConfigMappingEntity;
+  };
+  encryptor: Encryptor;
+};
+
 export class DynamodbAppConfigRepo implements AppConfigRepo {
   private logger = createLogger("DynamodbAppConfigRepo");
 
   stripeConfigEntity: DynamoDbStripeConfigEntity;
   channelConfigMappingEntity: DynamoDbChannelConfigMappingEntity;
+  encryptor: Encryptor;
 
-  // todo: why do we inject entities? for testing only?
-  constructor(config: {
-    entities: {
-      stripeConfig: DynamoDbStripeConfigEntity;
-      channelConfigMapping: DynamoDbChannelConfigMappingEntity;
-    };
-  }) {
+  constructor(
+    config: ConstructorParams = {
+      entities: {
+        stripeConfig: DynamoDbStripeConfig.entity,
+        channelConfigMapping: DynamoDbChannelConfigMapping.entity,
+      },
+      encryptor: new Encryptor(env.SECRET_KEY),
+    },
+  ) {
     this.channelConfigMappingEntity = config.entities.channelConfigMapping;
     this.stripeConfigEntity = config.entities.stripeConfig;
+    this.encryptor = config.encryptor;
   }
 
   /**
@@ -158,11 +171,15 @@ export class DynamodbAppConfigRepo implements AppConfigRepo {
 
     const configResult = StripeConfig.create({
       name: parsed.configName,
-      restrictedKey: createStripeRestrictedKey(parsed.stripeRk)._unsafeUnwrap(), // make it throwable
+      restrictedKey: createStripeRestrictedKey(
+        this.encryptor.decrypt(parsed.stripeRk),
+      )._unsafeUnwrap(), // make it throwable
       webhookId: parsed.stripeWhId,
       id: parsed.configId,
       publishableKey: createStripePublishableKey(parsed.stripePk)._unsafeUnwrap(), // make it throwable
-      webhookSecret: createStripeWebhookSecret(parsed.stripeWhSecret)._unsafeUnwrap(), // make it throwable
+      webhookSecret: createStripeWebhookSecret(
+        this.encryptor.decrypt(parsed.stripeWhSecret),
+      )._unsafeUnwrap(), // make it throwable
     });
 
     if (configResult.isErr()) {
@@ -254,18 +271,18 @@ export class DynamodbAppConfigRepo implements AppConfigRepo {
     saleorApiUrl: SaleorApiUrl;
     appId: string;
   }): Promise<Result<void | null, InstanceType<typeof AppConfigRepoError.FailureSavingConfig>>> {
-    const command = this.stripeConfigEntity.build(PutItemCommand).item({
-      configId: config.id,
-      stripePk: config.publishableKey,
-      stripeRk: config.restrictedKey,
-      stripeWhId: config.webhookId,
-      stripeWhSecret: config.webhookSecret,
-      PK: DynamoDbStripeConfig.accessPattern.getPK({ saleorApiUrl, appId }),
-      SK: DynamoDbStripeConfig.accessPattern.getSKforSpecificItem({ configId: config.id }),
-      configName: config.name,
-    });
-
     try {
+      const command = this.stripeConfigEntity.build(PutItemCommand).item({
+        configId: config.id,
+        stripePk: config.publishableKey,
+        stripeRk: this.encryptor.encrypt(config.restrictedKey),
+        stripeWhId: config.webhookId,
+        stripeWhSecret: this.encryptor.encrypt(config.webhookSecret),
+        PK: DynamoDbStripeConfig.accessPattern.getPK({ saleorApiUrl, appId }),
+        SK: DynamoDbStripeConfig.accessPattern.getSKforSpecificItem({ configId: config.id }),
+        configName: config.name,
+      });
+
       const response = await command.send();
 
       this.logger.info("Saved config to DynamoDB", {

@@ -1,5 +1,5 @@
 import { mockedSaleorApiUrl } from "@/__tests__/mocks/saleor-api-url";
-import { WebhookParams } from "@/app/api/stripe/webhook/webhook-params";
+import { WebhookParams } from "@/app/api/webhooks/stripe/webhook-params";
 import { SaleorMoney } from "@/modules/saleor/saleor-money";
 import { createSaleorTransactionId } from "@/modules/saleor/saleor-transaction-id";
 
@@ -11,12 +11,9 @@ export const mockAppUrlBase = "https://my-app.saleor.app";
 export const mockAdyenWebhookUrl = `${mockAppUrlBase}?${new URLSearchParams({
   [WebhookParams.saleorApiUrlSearchParam]: mockedSaleorApiUrl,
   [WebhookParams.configurationIdIdSearchParam]: mockedConfigurationId,
+  [WebhookParams.appIdSearchParam]: mockedSaleorAppId,
 }).toString()}`;
-/**
- *  @deprecated - use `mockedSaleorTransactionIdBranded` instead
- */
-export const mockedSaleorTransactionId = "mocked-transaction-id";
-export const mockedSaleorTransactionIdBranded = createSaleorTransactionId("mocked-transaction-id");
+export const mockedSaleorTransactionId = createSaleorTransactionId("mocked-transaction-id");
 
 export const getMockedSaleorMoney = (amount: number = 10_00, currency: string = "usd") =>
   SaleorMoney.createFromStripe({

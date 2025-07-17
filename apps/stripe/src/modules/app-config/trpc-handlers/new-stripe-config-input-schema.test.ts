@@ -40,18 +40,38 @@ describe("newStripeConfigInputSchema", () => {
           ]
         },
         {
+          "message": "Invalid Publishable Key format. Must start with 'pk_test_' or 'pk_live_'.",
           "code": "custom",
-          "message": "Invalid Publishable Key format, it should start with pk_live_ or pk_test_",
+          "fatal": true,
           "path": [
             "publishableKey"
           ]
         },
         {
+          "message": "Invalid Restricted Key format. Must start with 'pk_test_' or 'pk_live_'.",
           "code": "custom",
-          "message": "Invalid Restricted Key format, it should start with rk_test_ or rk_live_",
+          "fatal": true,
           "path": [
             "restrictedKey"
           ]
+        }
+      ]]
+    `);
+  });
+
+  it("Returns custom error if TEST and LIVE keys are mixed", () => {
+    expect(() =>
+      newStripeConfigInputSchema.parse({
+        name: "test",
+        restrictedKey: "rk_live_asd",
+        publishableKey: "pk_test_asd",
+      }),
+    ).toThrowErrorMatchingInlineSnapshot(`
+      [ZodError: [
+        {
+          "code": "custom",
+          "message": "Both Publishable and Restricted Keys must be live or test",
+          "path": []
         }
       ]]
     `);

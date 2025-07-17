@@ -1,7 +1,7 @@
 import { captureException } from "@sentry/nextjs";
 import { err, ok, Result } from "neverthrow";
 
-import { WebhookParams } from "@/app/api/stripe/webhook/webhook-params";
+import { WebhookParams } from "@/app/api/webhooks/stripe/webhook-params";
 import { BaseError } from "@/lib/errors";
 import { createLogger } from "@/lib/logger";
 import { NewStripeConfigInput } from "@/modules/app-config/trpc-handlers/new-stripe-config-input-schema";
@@ -10,6 +10,8 @@ import { StripeClient } from "@/modules/stripe/stripe-client";
 import { StripeRestrictedKey } from "@/modules/stripe/stripe-restricted-key";
 import { StripeWebhookUrlBuilder } from "@/modules/stripe/stripe-webhook-url-builder";
 import { supportedStripeEvents } from "@/modules/stripe/supported-stripe-events";
+
+import { STRIPE_API_VERSION } from "./stripe-api-version";
 
 const CantCreateWebhookUrlError = BaseError.subclass("CantCreateWebhookUrlError", {
   props: {
@@ -35,15 +37,44 @@ const CantRemoveWebhookError = BaseError.subclass("CantRemoveWebhookError", {
   },
 });
 
+const CantFetchWebhookError = BaseError.subclass("CantRemoveWebhookError", {
+  props: {
+    _internalName: "StripeWebhookManagerErrors.CantRemoveWebhookError" as const,
+  },
+});
+
 export const StripeWebhookManagerErrors = {
   CantCreateWebhookUrlError,
   CantCreateWebhookError,
   CantRemoveWebhookError,
+  CantFetchWebhookError,
 };
 
 export class StripeWebhookManager {
   private logger = createLogger("StripeWebhookManager");
   private urlBuilder = new StripeWebhookUrlBuilder();
+
+  async getWebhook({
+    webhookId,
+    restrictedKey,
+  }: {
+    webhookId: string;
+    restrictedKey: StripeRestrictedKey;
+  }) {
+    try {
+      const client = StripeClient.createFromRestrictedKey(restrictedKey);
+
+      const webhook = await client.nativeClient.webhookEndpoints.retrieve(webhookId);
+
+      return ok({
+        status: webhook.status as "enabled" | "disabled",
+      });
+    } catch (e) {
+      this.logger.error("Error retrieving webhook", { error: e });
+
+      return err(new CantFetchWebhookError("Error retrieving webhook", { cause: e }));
+    }
+  }
 
   async removeWebhook({
     webhookId,
@@ -71,7 +102,7 @@ export class StripeWebhookManager {
     config: NewStripeConfigInput & {
       configurationId: string;
     },
-    { appUrl, saleorApiUrl }: { appUrl: string; saleorApiUrl: SaleorApiUrl },
+    { appUrl, saleorApiUrl, appId }: { appUrl: string; saleorApiUrl: SaleorApiUrl; appId: string },
   ): Promise<
     Result<
       {
@@ -92,6 +123,7 @@ export class StripeWebhookManager {
       webhookParams: WebhookParams.createFromParams({
         saleorApiUrl: saleorApiUrl,
         configurationId: config.configurationId,
+        appId,
       }),
     });
 
@@ -112,11 +144,12 @@ export class StripeWebhookManager {
     try {
       const result = await client.nativeClient.webhookEndpoints.create({
         url: webhookUrl.value.toString(),
-        description: `Created by Saleor Stripe app, config name: ${config.name}`,
+        description: `Created by Saleor App Payment Stripe, config name: ${config.name}`,
         enabled_events: supportedStripeEvents,
         metadata: {
           saleorAppConfigurationId: config.configurationId,
         },
+        api_version: STRIPE_API_VERSION,
       });
 
       const { secret, id } = result;

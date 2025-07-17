@@ -1,0 +1,24 @@
+fragment TransactionCancelationRequestedEvent on TransactionCancelationRequested {
+  ...EventMetadata
+  transaction {
+    pspReference
+    checkout {
+      id
+      channel {
+        ...Channel
+      }
+    }
+    order {
+      id
+      channel {
+        ...Channel
+      }
+    }
+  }
+}
+
+subscription TransactionCancelationRequested {
+  event {
+    ...TransactionCancelationRequestedEvent
+  }
+}

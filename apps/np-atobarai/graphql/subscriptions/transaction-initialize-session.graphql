@@ -1,0 +1,19 @@
+fragment TransactionInitializeSessionEvent on TransactionInitializeSession {
+  ...EventMetadata
+  action {
+    amount
+    currency
+  }
+  transaction {
+    token
+  }
+  sourceObject {
+    ...SourceObject
+  }
+}
+
+subscription TransactionInitializeSession {
+  event {
+    ...TransactionInitializeSessionEvent
+  }
+}

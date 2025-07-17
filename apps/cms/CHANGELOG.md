@@ -1,18 +1,33 @@
 # saleor-app-cms
 
-## 2.12.3
-
-### Patch Changes
-
-- 71329119: Adding redis error handling as needed to keep saleor app reactive
-
 ## 2.12.2
 
 ### Patch Changes
 
-- 76e21f24: fixing style / imports
+- @saleor/apps-logger@1.6.1
 
 ## 2.12.1
+
+### Patch Changes
+
+- Updated dependencies [00070dc3]
+  - @saleor/apps-shared@1.13.0
+
+## 2.12.0
+
+### Minor Changes
+
+- fe9c5cd0: Added bulk processing of uploading products to Strapi CMS. After this change you can use `STRAPI_BATCH_SIZE` to control number to request send in the same batch to Strapi API with `STRAPI_MILIS_DELAY_BETWEEN_BATCHES` controlling how frequent those batches are send to Strapi API.
+
+### Patch Changes
+
+- c490ca75: Fixed link to Saleor docs. After this change links should point to the newest version of docs without redirects.
+- Updated dependencies [d3702072]
+- Updated dependencies [c68f1e9f]
+  - @saleor/apps-logger@1.6.0
+  - @saleor/apps-otel@2.3.0
+
+## 2.11.9
 
 ### Patch Changes
 
@@ -104,7 +119,7 @@
 - Updated dependencies [8154e9e9]
   - @saleor/apps-otel@2.1.0
 
-## 2.12.0
+## 2.11.0
 
 ### Minor Changes
 
@@ -123,10 +138,6 @@
   - @saleor/apps-otel@2.0.0
   - @saleor/apps-logger@1.5.0
   - @saleor/apps-shared@1.12.0
-- Updated dependencies [3c4358ae]
-- Updated dependencies [23a31eb4]
-  - @saleor/apps-otel@2.0.0
-  - @saleor/apps-logger@1.5.0
 
 ## 2.10.1
 
@@ -134,24 +145,11 @@
 
 - b3e136b0: Add `saleor-app` prefix to `package.json` so names of npm app projects are in sync with names of Vercel projects. No visible changes to the user.
 
-## 2.11.1
-
-### Patch Changes
-
-- 1e7884c6: Adding a default hash key to redis to make the apps allow to run on the same redis instance
-
-## 2.11.0
-
-### Minor Changes
-
-- 97ee2ccc: Adding redis APL to cms-v2
-
 ## 2.10.0
 
 ### Minor Changes
 
 - 34da7f12: Adding the SKU as synced field to the CMS app
-- 9d051017: Added native support for redis as possible APL, without any breaking changes.
 
 ### Patch Changes
 

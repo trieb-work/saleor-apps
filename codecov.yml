@@ -2,10 +2,10 @@ coverage:
   status:
     patch:
       default:
-        informational: true
+        target: auto
     project:
       default:
-        informational: true
+        target: auto
       app-avatax:
         flags: [avatax]
       app-cms:
@@ -20,12 +20,27 @@ coverage:
         flags: [smtp]
       app-payment-stripe:
         flags: [stripe]
+      app-payment-np-atobarai:
+        flags: [np-atobarai]
       packages-logger:
         flags: [logger]
       packages-shared:
         flags: [shared]
       packages-webhook-utils:
         flags: [webhook-utils]
+      packages-domain:
+        flags: [domain]
+      packages-errors:
+        flags: [errors]
+      packages-apl-dynamo:
+        flags: [apl-dynamo]
+ignore:
+  - "**/scripts/**"
+  - "**/e2e/**"
+  - "**/graphql/**"
+  - "**/generated/**"
+  - "**/*.config.js"
+  - "**/*.config.ts"
 
 flags:
   avatax:
@@ -49,6 +64,9 @@ flags:
   stripe:
     paths:
       - apps/stripe/
+  np-atobarai:
+    paths:
+      - apps/np-atobarai/
   logger:
     paths:
       - packages/logger/
@@ -58,3 +76,12 @@ flags:
   webhook-utils:
     paths:
       - packages/webhook-utils/
+  domain:
+    paths:
+      - packages/domain/
+  errors:
+      paths:
+        - packages/errors/
+  apl-dynamo:
+      paths:
+        - packages/apl-dynamo/

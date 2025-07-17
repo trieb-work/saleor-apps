@@ -5,7 +5,7 @@ import { StripeClient } from "@/modules/stripe/stripe-client";
 
 import { StripePaymentIntentId } from "./stripe-payment-intent-id";
 import { StripeRestrictedKey } from "./stripe-restricted-key";
-import { IStripePaymentIntentsApi } from "./types";
+import { CreatePaymentIntentArgs, IStripePaymentIntentsApi } from "./types";
 
 export class StripePaymentIntentsApi implements IStripePaymentIntentsApi {
   private stripeApiWrapper: Pick<Stripe, "paymentIntents">;
@@ -20,11 +20,24 @@ export class StripePaymentIntentsApi implements IStripePaymentIntentsApi {
     return new StripePaymentIntentsApi(stripeApiWrapper.nativeClient);
   }
 
-  async createPaymentIntent(args: {
-    params: Stripe.PaymentIntentCreateParams;
-  }): Promise<Result<Stripe.PaymentIntent, unknown>> {
+  static createFromClient(client: StripeClient) {
+    return new StripePaymentIntentsApi(client.nativeClient);
+  }
+
+  async createPaymentIntent(
+    args: CreatePaymentIntentArgs,
+  ): Promise<Result<Stripe.PaymentIntent, unknown>> {
     return ResultAsync.fromPromise(
-      this.stripeApiWrapper.paymentIntents.create(args.params),
+      this.stripeApiWrapper.paymentIntents.create(
+        {
+          ...args.intentParams,
+          amount: args.stripeMoney.amount,
+          currency: args.stripeMoney.currency,
+        },
+        {
+          idempotencyKey: args.idempotencyKey,
+        },
+      ),
       (error) => error,
     );
   }
@@ -43,6 +56,15 @@ export class StripePaymentIntentsApi implements IStripePaymentIntentsApi {
   }): Promise<Result<Stripe.PaymentIntent, unknown>> {
     return ResultAsync.fromPromise(
       this.stripeApiWrapper.paymentIntents.capture(args.id),
+      (error) => error,
+    );
+  }
+
+  async cancelPaymentIntent(args: {
+    id: StripePaymentIntentId;
+  }): Promise<Result<Stripe.PaymentIntent, unknown>> {
+    return ResultAsync.fromPromise(
+      this.stripeApiWrapper.paymentIntents.cancel(args.id),
       (error) => error,
     );
   }

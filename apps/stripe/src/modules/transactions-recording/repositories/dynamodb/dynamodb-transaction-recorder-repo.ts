@@ -68,7 +68,7 @@ export class DynamoDBTransactionRecorderRepo implements TransactionRecorderRepo 
       const result = await operation.send();
 
       if (result.$metadata.httpStatusCode === 200) {
-        this.logger.info("Successfully wrote transaction to DynamoDB", {
+        this.logger.debug("Successfully wrote transaction to DynamoDB", {
           transaction,
         });
 
@@ -79,7 +79,7 @@ export class DynamoDBTransactionRecorderRepo implements TransactionRecorderRepo 
         cause: result,
       });
     } catch (e) {
-      this.logger.error("Failed to write transaction to DynamoDB", {
+      this.logger.debug("Failed to write transaction to DynamoDB", {
         error: e,
       });
 
@@ -134,7 +134,7 @@ export class DynamoDBTransactionRecorderRepo implements TransactionRecorderRepo 
             resolvedTransactionFlow: createResolvedTransactionFlow(resolvedTransactionFlow),
             saleorTransactionFlow: createSaleorTransactionFlow(saleorTransactionFlow),
             saleorTransactionId: createSaleorTransactionId(saleorTransactionId),
-            stripePaymentIntentId: createStripePaymentIntentId(paymentIntentId)._unsafeUnwrap(), // todo unwrap this from neverthrow
+            stripePaymentIntentId: createStripePaymentIntentId(paymentIntentId),
             selectedPaymentMethod: selectedPaymentMethod as PaymentMethod["type"],
           }),
         );
