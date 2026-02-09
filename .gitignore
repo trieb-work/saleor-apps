@@ -33,9 +33,6 @@ yarn-error.log*
 .turbo
 
 # env files
-.env
-.env.test
-.env.local
 .env.development.local
 .env.test.local
 .env.production.local
@@ -44,3 +41,4 @@ yarn-error.log*
 .saleor-app-auth.json
 .DS_Store
 *.pem
+config.bat
